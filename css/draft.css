@@ -40,9 +40,14 @@
   box-shadow: inset 0 -2px #12ab8d;
   margin-top: 1%;
 }
+
 .draft-flat-button:active {
   top: 1px;
   outline: none;
   -webkit-box-shadow: none;
   box-shadow: none;
+}
+
+table {
+  width: 100%;
 }
