@@ -3,7 +3,6 @@ var draftID;
 $(document).ready(function() {
   $('#draftIDSubmit').click(function() {
     draftID = parseInt($('#draftID').val());
-    alert(draftID);
 
     //verify draftID using firebase
 
@@ -11,7 +10,6 @@ $(document).ready(function() {
     $('#draftIDSubmit').remove();
 
     if(draftID > 0) {
-      alert("getting here");
 
       var currentPick = 0;
       var teams = [];
@@ -27,21 +25,23 @@ $(document).ready(function() {
 
       var table = $("<table></table>");
       table.attr('id','draftTable');
+      table.attr('class','flat-table flat-table-3')
 
       for(var y = 0; y < rounds; y++) {
         var row = $("<tr></tr>");
         row.attr('id','round'+(y+1));
 
-        for(var x = 0; x < teams.length+1; i++) {
+        for(var x = 0; x < teams.length+1; x++) {
           var cell;
           if(x == 0) {
-            cell = $('<th>1</th>');
+            cell = $('<th>'+(y+1)+'</th>');
           } else {
             currentPick++;
             cell = $('<th>'+currentPick+'</th>');
           }
           row.append(cell);
         }
+
         table.append(row);
       }
 
