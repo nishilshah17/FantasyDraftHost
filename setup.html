@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/setup.css" />
+
+    <!--jQuery-->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  </head>
+  <body>
+    <ul class="text-input-underline input-list">
+      <li>
+        <input type="text" id="leagueName" class="league-name" placeholder="league name" />
+      </li>
+      <li>
+        <select id="sportSelect" class="customSelect">
+          <option value="sport">Sport</option>
+          <option value="Football">Football</option>
+        </select>
+      <li>
+        <select id="roundsSelect" class="customSelect">
+        	<option value="rounds">Rounds</option>
+        </select>
+      </li>
+      <li>
+        <select id="teamsSelect" class="customSelect">
+          <option value="teams">Teams</option>
+        </select>
+      </li>
+      <li id="teamsInputList">
+      </li>
+      <li>
+        <input type="submit" value="setup draft" id="submitButton" class="submit-flat-button" />
+      </li>
+    </ul>
+  </body>
+  <script type="text/javascript" src="js/setup.js"></script>
+</html>

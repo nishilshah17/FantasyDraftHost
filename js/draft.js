@@ -1,4 +1,5 @@
 var draftID;
+var countdown;
 
 $(document).ready(function() {
   $('#draftIDSubmit').click(function() {
@@ -50,4 +51,40 @@ $(document).ready(function() {
     }
 
   });
+
+  $('#timerButton').click(function() {
+    var timerButtonValue = $('#timerButton').val();
+    if(timerButtonValue == "pause") {
+      $('#timerButton').val("resume");
+      pauseCountdown();
+    } else {
+      $('#timerButton').val("pause");
+      startCountdown();
+    }
+  });
 });
+
+function initiateCountdown() {
+  document.getElementById('timer').style.zIndex = 1000;
+
+  countdown = Tock({
+      countdown: true,
+      interval: 50,
+      callback: function () {
+          $('#countdown_clock').val(countdown.msToTime(countdown.lap()));
+      },
+      complete: function () {
+          alert("Time's up!");
+      }
+  });
+
+  setTimeout(startCountdown,1000);
+}
+
+function startCountdown() {
+    countdown.start($('#countdown_clock').val());
+}
+
+function pauseCountdown() {
+  countdown.pause();
+}
