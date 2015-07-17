@@ -1,6 +1,9 @@
 var draftID;
 var countdown;
 
+var ticking = new Audio("audio/ticking.wav");
+var alarm = new Audio("audio/alarm.wav");
+
 $(document).ready(function() {
   $('#draftIDSubmit').click(function() {
     draftID = parseInt($('#draftID').val());
@@ -42,14 +45,11 @@ $(document).ready(function() {
           }
           row.append(cell);
         }
-
         table.append(row);
       }
-
       $('#draftBody').append(table);
 
     }
-
   });
 
   $('#timerButton').click(function() {
@@ -59,7 +59,7 @@ $(document).ready(function() {
       pauseCountdown();
     } else {
       $('#timerButton').val("pause");
-      startCountdown();
+      resumeCountdown();
     }
   });
 });
@@ -71,20 +71,41 @@ function initiateCountdown() {
       countdown: true,
       interval: 50,
       callback: function () {
-          $('#countdown_clock').val(countdown.msToTime(countdown.lap()));
+        var currentValue = countdown.msToTime(countdown.lap());
+        var currentValueInt = parseInt(currentValue.replace(":",""));
+        if(currentValueInt <= 100) {
+          ticking.play();
+          $('#countdown_clock').css("color","red");
+        } else {
+          $('#countdown_clock').css("color", "black")
+        }
+        $('#countdown_clock').val(currentValue);
       },
       complete: function () {
-          alert("Time's up!");
+        ticking.pause();
+        alarm.play();
+        setTimeout(stopAlarm, 4500);
+        //alert firebase its too late to experience this pick
       }
   });
 
   setTimeout(startCountdown,1000);
 }
 
+function stopAlarm() {
+  alarm.pause();
+}
+
 function startCountdown() {
+  countdown.start("05:00");
+}
+
+function resumeCountdown() {
     countdown.start($('#countdown_clock').val());
 }
 
 function pauseCountdown() {
   countdown.pause();
+  ticking.pause();
+  alarm.pause();
 }

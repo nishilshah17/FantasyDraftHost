@@ -18,11 +18,52 @@ table {
   height: 100%;
 }
 
+#pickin {
+  z-index: -2000;
+  position:fixed;
+  top:0px;
+  left:0px;
+  background-color:white;
+  width: 100%;
+  height: 100%;
+}
+
+#pick {
+  z-index: -3000;
+  position:fixed;
+  top:0px;
+  left:0px;
+  background-color:white;
+  width: 100%;
+  height: 100%;
+}
+
 #countdown_clock {
   font-size: 275px;
   text-align: center;
   width: 100%;
   height: 85%;
+}
+
+#pickisin {
+  font-size: 220px;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+#player {
+  font-size: 125px;
+  text-align: center;
+  width: 100%;
+  height: 65%;
+}
+
+#team {
+  font-size: 80px;
+  text-align: center;
+  width: 100%;
+  height: 35%;
 }
 
 .draft-id-input {

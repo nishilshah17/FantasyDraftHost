@@ -114,3 +114,36 @@ ul.input-list li {
 	word-spacing: 0px;
 	width: 220px;
 }
+
+.draftID {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 60px;
+  text-align: center;
+}
+
+.home-flat-button {
+  position: relative;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 250px;
+  height: 60px;
+  padding: 0;
+  font-size: 22px;
+  color: white;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  background: #e74c3c;
+  border: 0;
+  border-bottom: 2px solid #db4334;
+  cursor: pointer;
+  -webkit-box-shadow: inset 0 -2px #db4334;
+  box-shadow: inset 0 -2px #db4334;
+  margin-top: 1em;
+}
+.home-flat-button:active {
+  top: 1px;
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}

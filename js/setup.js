@@ -17,9 +17,11 @@ $('#teamsSelect').change(function() {
   }
 });
 
+var ref = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts");
+
 $('#submitButton').click(function () {
-  var leagueName = $('#leagueName').val();
-  var sport = $('#sportSelect').val();
+  var league = $('#leagueName').val();
+  var sportName = $('#sportSelect').val();
   var numRounds = $('#roundsSelect').val();
   var numTeams = $('#teamsSelect').val();
   var teams = [];
@@ -31,4 +33,48 @@ $('#submitButton').click(function () {
     owners.push($('#owner'+(i+1)).val());
     phones.push($('#phone'+(i+1)).val());
   }
+
+  var currentPick = 0;
+  var allPicks = "{";
+  for(var i = 0; i < numRounds; i++) {
+    for(var j = 0; j < numTeams; j++) {
+      currentPick++;
+      var teamName;
+      var ownerName;
+      var phoneNumber;
+      if(i%2 == 0) {
+        teamName = teams[j];
+        ownerName = owners[j];
+        phoneNumber = phones[j];
+      } else {
+        teamName = teams[teams.length-1-j];
+        ownerName = owners[owners.length-1-j];
+        phoneNumber = phones[phones.length-1-j];
+      }
+      allPicks += '"'+currentPick+'": ';
+        allPicks += '{ "team": "'+teamName+'", "owner": "'+ownerName+'", "phone": "'+phoneNumber+'", "player": null, "playerTeam": null}';
+      if((i+1) == numRounds && (j+1) == numTeams) {
+        //do nothing
+      } else {
+        allPicks += ",";
+      }
+    }
+  }
+  allPicks += "}";
+  alert(allPicks);
+  var allPicks = JSON.parse(allPicks);
+
+  //send data to firebase
+  var newDraftRef = ref.push({
+    leagueName: league,
+    sport: sportName,
+    rounds: numRounds,
+    teams: numTeams,
+    picks: allPicks
+  });
+
+  var draftID = newDraftRef.key();
+  $('#setupBody').empty();
+  $('#setupBody').append('<div class="draftID">please note your draft id: <br/>'+draftID+'</div>');
+  $('#setupBody').append('<input type="submit" value="home" class="home-flat-button" onclick=window.location.href="index.html" />');
 });
