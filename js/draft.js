@@ -5,33 +5,42 @@ var ticking = new Audio("audio/ticking.wav");
 var alarm = new Audio("audio/alarm.wav");
 
 $(document).ready(function() {
+  var currentPick = 0;
+  var teams = [];
+  var owners = [];
+  var phones = [];
+  var numRounds;
+
   $('#draftIDSubmit').click(function() {
-    draftID = parseInt($('#draftID').val());
+    draftID = $('#draftID').val();
 
-    //verify draftID using firebase
+    var draftRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID);
 
-    $('#draftID').remove();
-    $('#draftIDSubmit').remove();
+    draftRef.on("value", function(draftSnapshot) {
+      teams = [];
+      owners = [];
+      phones = [];
 
-    if(draftID > 0) {
+      numRounds = draftSnapshot.child('rounds').val();
+      var numPicks = draftSnapshot.child('picks').numChildren();
+      var limit = numPicks/numRounds;
+      var counter = 0;
+      draftSnapshot.child('picks').forEach(function(pickSnapshot) {
+        counter++;
+        teams.push(pickSnapshot.child('team').val());
+        owners.push(pickSnapshot.child('owner').val());
+        phones.push(pickSnapshot.child('phone').val());
+        if(counter == limit) {
+          return true;
+        }
+      });
 
-      var currentPick = 0;
-      var teams = [];
-      var owners = [];
-      var rounds;
-
-      //replace the following bs data with firebase later
-      for(var i = 0; i < 10; i++) {
-        teams.push('team '+(i+1));
-        owners.push('owner '+(i+1));
-      }
-      rounds = 17;
-
+      $('#draft').empty();
       var table = $("<table></table>");
       table.attr('id','draftTable');
       table.attr('class','flat-table flat-table-3')
 
-      for(var y = 0; y < rounds; y++) {
+      for(var y = 0; y < numRounds; y++) {
         var row = $("<tr></tr>");
         row.attr('id','round'+(y+1));
 
@@ -41,15 +50,27 @@ $(document).ready(function() {
             cell = $('<th>'+(y+1)+'</th>');
           } else {
             currentPick++;
-            cell = $('<th>'+currentPick+'</th>');
+            if(y % 2 == 0) {
+              var currentOwner = owners[x-1];
+            } else {
+              var currentOwner = owners[owners.length-x];
+            }
+            cell = $('<th>'+currentPick+'<br/>'+currentOwner+'</th>');
           }
           row.append(cell);
         }
         table.append(row);
       }
-      $('#draftBody').append(table);
+      $('#draft').append(table);
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
+    });
 
-    }
+    $('#draftID').remove();
+    $('#draftIDSubmit').remove();
+
+
+  /**/
   });
 
   $('#timerButton').click(function() {
