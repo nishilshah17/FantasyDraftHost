@@ -122,7 +122,7 @@ function startCountdown() {
 }
 
 function resumeCountdown() {
-    countdown.start($('#countdown_clock').val());
+  countdown.start($('#countdown_clock').val());
 }
 
 function pauseCountdown() {
