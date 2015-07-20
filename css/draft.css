@@ -8,6 +8,10 @@ table {
   height: 100%;
 }
 
+#teamName {
+  font-family: openSans;
+}
+
 #timer {
   z-index: -1000;
   position:fixed;
@@ -72,7 +76,7 @@ table {
   margin-right: auto;
   display: block;
   vertical-align: top;
-  width: 250px;
+  width: 350px;
   height: 60px;
   padding: 0;
   font-size: 22px;
@@ -154,8 +158,7 @@ table {
 
 .timer-flat-button {
   position: relative;
-  margin-left: auto;
-  margin-right: auto;
+  float: right;
   display: block;
   width: 100px;
   height: 60px;
@@ -178,4 +181,31 @@ table {
   outline: none;
   -webkit-box-shadow: none;
   box-shadow: none;
+}
+
+@keyframes currentPicker {
+  0%   {background-color: #FFFFFF;}
+  10%  {background-color: #FFCCCC;}
+  20%  {background-color: #FF9999;}
+  30%  {background-color: #FF6666;}
+  35%  {background-color: #FF4C4C;}
+  40%  {background-color: #FF3232;}
+  45%  {background-color: #FF1919;}
+  50%  {background-color: #FF0000;}
+  55%  {background-color: #FF1919;}
+  60%  {background-color: #FF3232;}
+  65%  {background-color: #FF4C4C;}
+  70%  {background-color: #FF6666;}
+  75%  {background-color: #FF7F7F;}
+  80%  {background-color: #FF9999;}
+  85%  {background-color: #FFB2B2;}
+  90%  {background-color: #FFCCCC;}
+  95%  {background-color: #FFEFEF;}
+  100% {background-color: #FFFFFF;}
+}
+
+.currentPick {
+  background-color: #FFFFFF;
+  -webkit-animation: currentPicker 2.5s infinite;
+  animation: currentPicker 2.5s infinite;
 }
