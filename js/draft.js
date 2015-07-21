@@ -2,7 +2,6 @@ var draftID;
 var countdown;
 var draftNotStarted = true;
 
-var currentPick = 0;
 var currentTeam;
 var currentOwner;
 var currentPhone;
@@ -135,9 +134,9 @@ function initiateCountdown() {
 function showCountdown() {
   document.getElementById('timer').style.zIndex = 1000;
 }
+
 function stopAlarm() {
   alarm.pause();
-  currentPick++;
 }
 
 function startCountdown() {
@@ -155,15 +154,24 @@ function pauseCountdown() {
 }
 
 function nextPick(teams, owners, phones, players, playerTeams) {
-  currentPick++;
-  initiateCountdown();
 
+  pauseCountdown();
   var draftTable = document.getElementById('draftTable');
 
   var counter = 0;
   while(players[counter] != "null") {
     counter++;
   }
+  if(counter > 0) {
+    document.getElementById('timer').style.zIndex = -1000;
+    document.getElementById('pickin').style.zIndex = 2000;
+    responsiveVoice.speak("The pick is in", "UK English Male",{onStart: nothing, onEnd: releaseAnnouncePick});
+    function releaseAnnouncePick() {
+      announcePick(currentTeam, currentOwner, players[counter-1], playerTeams[counter-1]);
+    }
+  }
+
+  initiateCountdown();
   currentTeam = teams[counter];
   currentOwner = owners[counter];
   currentPhone = phones[counter];
@@ -176,4 +184,19 @@ function nextPick(teams, owners, phones, players, playerTeams) {
   $('#teamName').empty();
   $('#teamName').append(currentTeam);
 
+}
+
+function announcePick(t, o, p, player, playerTeam) {
+  document.getElementById('pickin').style.zIndex = -2000;
+  document.getElementById('pick').style.zIndex = 3000;
+  responsiveVoice.speak(player);
+}
+
+function nothing() {
+}
+
+function sleep(miliseconds) {
+ var currentTime = new Date().getTime();
+ while (currentTime + miliseconds >= new Date().getTime()) {
+ }
 }
