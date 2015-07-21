@@ -1,5 +1,6 @@
 var draftID;
 var countdown;
+var draftNotStarted = true;
 
 var currentPick = 0;
 var currentTeam;
@@ -7,10 +8,12 @@ var currentOwner;
 var currentPhone;
 
 $(document).ready(function() {
-  var pickCounter = 0;
-  var teams = [];
-  var owners = [];
-  var phones = [];
+  var pickCounter;
+  var teams;
+  var owners;
+  var phones;
+  var players;
+  var playerTeams;
   var numRounds;
 
   $('#draftIDSubmit').click(function() {
@@ -19,22 +22,24 @@ $(document).ready(function() {
     var draftRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID);
 
     draftRef.on("value", function(draftSnapshot) {
+      pickCounter = 0;
       teams = [];
       owners = [];
       phones = [];
+      players = [];
+      playerTeams = [];
 
       numRounds = draftSnapshot.child('rounds').val();
       var numPicks = draftSnapshot.child('picks').numChildren();
-      var limit = numPicks/numRounds;
+
       var counter = 0;
       draftSnapshot.child('picks').forEach(function(pickSnapshot) {
         counter++;
         teams.push(pickSnapshot.child('team').val());
         owners.push(pickSnapshot.child('owner').val());
         phones.push(pickSnapshot.child('phone').val());
-        if(counter == limit) {
-          return true;
-        }
+        players.push(pickSnapshot.child('player').val());
+        playerTeams.push(pickSnapshot.child('playerTeam').val());
       });
 
       $('#draft').empty();
@@ -46,7 +51,7 @@ $(document).ready(function() {
         var row = $("<tr></tr>");
         row.attr('id','round'+(y+1));
 
-        for(var x = 0; x < teams.length+1; x++) {
+        for(var x = 0; x < (teams.length/numRounds)+1; x++) {
           var cell;
           if(x == 0) {
             cell = $('<th>'+(y+1)+'</th>');
@@ -57,14 +62,20 @@ $(document).ready(function() {
             } else {
               var currentOwner = owners[owners.length-x];
             }
-            cell = $('<th>'+pickCounter+'<br/>'+currentOwner+'</th>');
+            if(players[pickCounter-1] == "null") {
+              cell = $('<th id="'+pickCounter+'">'+pickCounter+'<br/>'+currentOwner+'</th>');
+            } else {
+              cell = $('<th id="'+pickCounter+'">'+players[pickCounter-1]+'<br/>'+currentOwner+'</th>');
+            }
           }
           row.append(cell);
         }
         table.append(row);
       }
       $('#draft').append(table);
-      startDraft(teams, owners, phones);
+      if(draftNotStarted) {
+        nextPick(teams, owners, phones, players, playerTeams);
+      }
     }, function (errorObject) {
       console.log("The read failed: " + errorObject.code);
     });
@@ -126,6 +137,7 @@ function showCountdown() {
 }
 function stopAlarm() {
   alarm.pause();
+  currentPick++;
 }
 
 function startCountdown() {
@@ -142,29 +154,26 @@ function pauseCountdown() {
   alarm.pause();
 }
 
-function startDraft(teams, owners, phones) {
+function nextPick(teams, owners, phones, players, playerTeams) {
+  currentPick++;
   initiateCountdown();
 
   var draftTable = document.getElementById('draftTable');
 
-  for(var x = 0; x < draftTable.rows.length; x++) {
-    currentPick++;
-    var row = draftTable.rows[x];
-    for(var y = 1; y < row.cells.length; y++) {
-      if(x % 2 == 0) {
-        currentTeam = teams[y-1];
-        currentOwner = owners[y-1];
-        currentPhone = phones[y-1];
-      } else {
-        currentTeam = teams[teams.length-y];
-        currentOwner = owners[owners.length-y];
-        currentPhone = phones[phones.length-y];
-      }
-      var col = row.cells[y];
-      col.className += "currentPick";
-      $('#teamName').empty();
-      $('#teamName').append(currentTeam);
-    }
+  var counter = 0;
+  while(players[counter] != "null") {
+    counter++;
   }
+  currentTeam = teams[counter];
+  currentOwner = owners[counter];
+  currentPhone = phones[counter];
+  if(counter > 0) {
+    var previousCell = document.getElementById(counter);
+    previousCell.className = "";
+  }
+  var cell = document.getElementById(counter+1);
+  cell.className += "currentPick";
+  $('#teamName').empty();
+  $('#teamName').append(currentTeam);
 
 }
