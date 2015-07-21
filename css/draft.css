@@ -67,7 +67,14 @@ table {
   font-size: 125px;
   text-align: center;
   width: 100%;
-  height: 65%;
+  height: 50%;
+}
+
+#playerTeam {
+  font-size: 60px;
+  text-align: center;
+  width: 100%;
+  height: 15%;
 }
 
 #team {

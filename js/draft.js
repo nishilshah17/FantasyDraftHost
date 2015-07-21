@@ -2,6 +2,9 @@ var draftID;
 var countdown;
 var draftNotStarted = true;
 
+var ticking;
+var alarm;
+
 var currentTeam;
 var currentOwner;
 var currentPhone;
@@ -99,8 +102,8 @@ $(document).ready(function() {
 function initiateCountdown() {
   document.getElementById('timer').style.zIndex = 1000;
 
-  var ticking = new Audio("audio/ticking.wav");
-  var alarm = new Audio("audio/alarm.wav");
+  ticking = new Audio("audio/ticking.wav");
+  alarm = new Audio("audio/alarm.wav");
 
   countdown = Tock({
       countdown: true,
@@ -112,7 +115,7 @@ function initiateCountdown() {
           document.getElementById('timer').style.zIndex = -1000;
           setTimeout(showCountdown, 24000);
         }
-        if(currentValueInt <= 100) {
+        if(currentValueInt <= 100 && currentValueInt != 0) {
           ticking.play();
           $('#countdown_clock').css("color","red");
         } else {
@@ -153,9 +156,10 @@ function pauseCountdown() {
   alarm.pause();
 }
 
+var topp;
+
 function nextPick(teams, owners, phones, players, playerTeams) {
 
-  pauseCountdown();
   var draftTable = document.getElementById('draftTable');
 
   var counter = 0;
@@ -163,12 +167,15 @@ function nextPick(teams, owners, phones, players, playerTeams) {
     counter++;
   }
   if(counter > 0) {
+    topp = [];
+    pauseCountdown();
     document.getElementById('timer').style.zIndex = -1000;
     document.getElementById('pickin').style.zIndex = 2000;
-    responsiveVoice.speak("The pick is in", "UK English Male",{onStart: nothing, onEnd: releaseAnnouncePick});
-    function releaseAnnouncePick() {
-      announcePick(currentTeam, currentOwner, players[counter-1], playerTeams[counter-1]);
-    }
+    topp.push(currentTeam);
+    topp.push(currentOwner);
+    topp.push(players[counter-1]);
+    topp.push(playerTeams[counter-1]);
+    responsiveVoice.speak("The pick is in", "UK English Male",{onstart: nothing, onend: pauseForTeam});
   }
 
   initiateCountdown();
@@ -186,10 +193,21 @@ function nextPick(teams, owners, phones, players, playerTeams) {
 
 }
 
-function announcePick(t, o, p, player, playerTeam) {
+function announcePick() {
   document.getElementById('pickin').style.zIndex = -2000;
+  $('#player').val(topp[2]);
+  $('#playerTeam').attr('placeholder',topp[3]);
+  $('#team').val(topp[0]);
   document.getElementById('pick').style.zIndex = 3000;
-  responsiveVoice.speak(player);
+  responsiveVoice.speak(topp[2], "UK English Male");
+}
+
+function pauseForTeam() {
+  setTimeout(announceTeam, 3000);
+}
+
+function announceTeam() {
+  responsiveVoice.speak(topp[0]+" selects ", "UK English Male", {onstart: nothing, onend: announcePick});
 }
 
 function nothing() {
