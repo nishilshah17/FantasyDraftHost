@@ -1,5 +1,6 @@
 var draftID;
 var playerData;
+var messageData;
 var countdown;
 var draftNotStarted = true;
 
@@ -221,6 +222,26 @@ function loadPlayerData() {
       }
     }*/
   });
+}
+
+function checkMessages() {
+  $.ajax({
+    url: 'https://api.twilio.com/2010-04-01/Accounts/'+sid+'/Messages.json',
+    type: 'get',
+    dataType: 'json',
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader('Authorization',make_base_auth(sid,authToken));
+    },
+    success: function(data) {
+      messageData = data;
+    }
+  });
+}
+
+function make_base_auth(user, password) {
+    var tok = user + ':' + password;
+    var hash = btoa(tok);
+    return 'Basic ' + hash;
 }
 
 function nothing() {
