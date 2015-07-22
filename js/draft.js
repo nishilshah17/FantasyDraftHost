@@ -1,4 +1,5 @@
 var draftID;
+var playerData;
 var countdown;
 var draftNotStarted = true;
 
@@ -19,8 +20,9 @@ $(document).ready(function() {
   var numRounds;
 
   $('#draftIDSubmit').click(function() {
-    draftID = $('#draftID').val();
+    loadPlayerData();
 
+    draftID = $('#draftID').val();
     var draftRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID);
 
     draftRef.on("value", function(draftSnapshot) {
@@ -208,6 +210,17 @@ function pauseForTeam() {
 
 function announceTeam() {
   responsiveVoice.speak(topp[0]+" selects ", "UK English Male", {onstart: nothing, onend: announcePick});
+}
+
+function loadPlayerData() {
+  $.getJSON('http://cors.io/?u=http://www.fantasyfootballnerd.com/service/players/json/63utcjcxdghw', function(data) {
+    playerData = data;
+    /*for(var i = 0; i < data.Players.length; i++) {
+      if(data.Players[i].displayName == "Brandon Marshall") {
+        alert(data.Players[i].team+" "+data.Players[i].position);
+      }
+    }*/
+  });
 }
 
 function nothing() {
