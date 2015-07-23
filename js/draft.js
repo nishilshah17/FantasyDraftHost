@@ -1,6 +1,9 @@
 var draftID;
 var playerData;
 var messageData;
+
+var ogMessagesLength;
+var currentMessagesLength;
 var countdown;
 var draftNotStarted = true;
 
@@ -10,6 +13,10 @@ var alarm;
 var currentTeam;
 var currentOwner;
 var currentPhone;
+
+var pickedPlayer;
+var pickedPlayerTeam;
+var pickedPlayerPosition;
 
 $(document).ready(function() {
   var pickCounter;
@@ -185,6 +192,11 @@ function nextPick(teams, owners, phones, players, playerTeams) {
   currentTeam = teams[counter];
   currentOwner = owners[counter];
   currentPhone = phones[counter];
+
+  updateMessageData();
+  ogMessagesLength = messageData.messages.length;
+  checkMessages();
+
   if(counter > 0) {
     var previousCell = document.getElementById(counter);
     previousCell.className = "";
@@ -216,15 +228,10 @@ function announceTeam() {
 function loadPlayerData() {
   $.getJSON('http://cors.io/?u=http://www.fantasyfootballnerd.com/service/players/json/63utcjcxdghw', function(data) {
     playerData = data;
-    /*for(var i = 0; i < data.Players.length; i++) {
-      if(data.Players[i].displayName == "Brandon Marshall") {
-        alert(data.Players[i].team+" "+data.Players[i].position);
-      }
-    }*/
   });
 }
 
-function checkMessages() {
+function updateMessageData() {
   $.ajax({
     url: 'https://api.twilio.com/2010-04-01/Accounts/'+sid+'/Messages.json',
     type: 'get',
@@ -236,6 +243,52 @@ function checkMessages() {
       messageData = data;
     }
   });
+}
+
+function checkMessages() {
+  updateMessageData();
+  var repeat;
+
+  currentMessagesLength = messageData.messages.length;
+
+  if(currentMessagesLength > ogMessagesLength) {
+    for(var i = ogMessagesLength; i < currentMessagesLength-1; i++) {
+      var fromPhone = messageData.messages[i].from;
+      fromPhone = fromPhone.substring(2);
+      var playerPicked = messageData.messages[i].body;
+      if(fromPhone == currentPhone && containsPlayer(playerPicked)) {
+        repeat = false;
+        //save pick to firebase at this point
+        break;
+      } else {
+        repeat = true;
+      }
+    }
+  } else {
+    repeat = true;
+  }
+
+  if(repeat) {
+    setTimeout(checkMessages,5000);
+  }
+}
+
+function containsPlayer(playerName) {
+  var contains;
+
+  for (var i = 0; i < data.Players.length; i++) {
+    if(data.Players[i].displayName == playerName) {
+      contains = true;
+      pickedPlayer = data.Players[i].displayName;
+      pickedPlayerTeam = data.Players[i].team;
+      pickedPlayerPosition = data.Players[i].position;
+      break;
+    } else {
+      contains = false;
+    }
+  }
+
+  return contains;
 }
 
 function make_base_auth(user, password) {
