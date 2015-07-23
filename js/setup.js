@@ -52,7 +52,7 @@ $('#submitButton').click(function () {
         phoneNumber = phones[phones.length-1-j];
       }
       allPicks += '"'+currentPick+'": ';
-        allPicks += '{ "team": "'+teamName+'", "owner": "'+ownerName+'", "phone": "'+phoneNumber+'", "player": "null", "playerTeam": "null"}';
+        allPicks += '{ "team": "'+teamName+'", "owner": "'+ownerName+'", "phone": "'+phoneNumber+'", "player": "null", "playerTeam": "null", "playerPosition": "null"}';
       if((i+1) == numRounds && (j+1) == numTeams) {
         //do nothing
       } else {
@@ -61,7 +61,6 @@ $('#submitButton').click(function () {
     }
   }
   allPicks += "}";
-  alert(allPicks);
   var allPicks = JSON.parse(allPicks);
 
   //send data to firebase

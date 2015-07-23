@@ -1,30 +1,29 @@
 var draftID;
-var playerData;
-var messageData;
-
-var ogMessagesLength;
-var currentMessagesLength;
 var countdown;
 var draftNotStarted = true;
+
+var playerData;
+var messageData;
+var ogMessagesLength;
+var currentMessagesLength;
 
 var ticking;
 var alarm;
 
+//information for team on the clock
 var currentTeam;
 var currentOwner;
 var currentPhone;
 
+//information for player that was just selected
 var pickedPlayer;
 var pickedPlayerTeam;
 var pickedPlayerPosition;
 
 $(document).ready(function() {
   var pickCounter;
-  var teams;
-  var owners;
-  var phones;
-  var players;
-  var playerTeams;
+  var teams, owners, phones;
+  var players, playerTeams, playerPositions;
   var numRounds;
 
   $('#draftIDSubmit').click(function() {
@@ -40,6 +39,7 @@ $(document).ready(function() {
       phones = [];
       players = [];
       playerTeams = [];
+      playerPositions = [];
 
       numRounds = draftSnapshot.child('rounds').val();
       var numPicks = draftSnapshot.child('picks').numChildren();
@@ -52,6 +52,7 @@ $(document).ready(function() {
         phones.push(pickSnapshot.child('phone').val());
         players.push(pickSnapshot.child('player').val());
         playerTeams.push(pickSnapshot.child('playerTeam').val());
+        playerPositions.push(pickSnapshot.child('playerPosition').val());
       });
 
       $('#draft').empty();
@@ -86,7 +87,7 @@ $(document).ready(function() {
       }
       $('#draft').append(table);
       if(draftNotStarted) {
-        nextPick(teams, owners, phones, players, playerTeams);
+        nextPick(teams, owners, phones, players, playerTeams, playerPositions);
       }
     }, function (errorObject) {
       console.log("The read failed: " + errorObject.code);
@@ -168,7 +169,7 @@ function pauseCountdown() {
 
 var topp;
 
-function nextPick(teams, owners, phones, players, playerTeams) {
+function nextPick(teams, owners, phones, players, playerTeams, playerPositions) {
 
   var draftTable = document.getElementById('draftTable');
 
@@ -185,17 +186,15 @@ function nextPick(teams, owners, phones, players, playerTeams) {
     topp.push(currentOwner);
     topp.push(players[counter-1]);
     topp.push(playerTeams[counter-1]);
+    topp.push(playerPositions[counter-1]);
     responsiveVoice.speak("The pick is in", "UK English Male",{onstart: nothing, onend: pauseForTeam});
+  } else {
+    initiateCountdown();
   }
 
-  initiateCountdown();
   currentTeam = teams[counter];
   currentOwner = owners[counter];
   currentPhone = phones[counter];
-
-  updateMessageData();
-  ogMessagesLength = messageData.messages.length;
-  checkMessages();
 
   if(counter > 0) {
     var previousCell = document.getElementById(counter);
@@ -206,15 +205,25 @@ function nextPick(teams, owners, phones, players, playerTeams) {
   $('#teamName').empty();
   $('#teamName').append(currentTeam);
 
+  updateMessageData();
+  ogMessagesLength = messageData.messages.length;
+  checkMessages(counter+1);
+
 }
 
 function announcePick() {
   document.getElementById('pickin').style.zIndex = -2000;
-  $('#player').val(topp[2]);
+  $('#player').val(topp[2]+", "+topp[4]);
   $('#playerTeam').attr('placeholder',topp[3]);
   $('#team').val(topp[0]);
   document.getElementById('pick').style.zIndex = 3000;
   responsiveVoice.speak(topp[2], "UK English Male");
+  setTimeout(hidePick,3000);
+  setTimeout(initiateCountdown,4000);
+}
+
+function hidePick() {
+  document.getElementById('pick').style.zIndex = -3000;
 }
 
 function pauseForTeam() {
@@ -236,6 +245,7 @@ function updateMessageData() {
     url: 'https://api.twilio.com/2010-04-01/Accounts/'+sid+'/Messages.json',
     type: 'get',
     dataType: 'json',
+    async: false,
     beforeSend: function(xhr) {
       xhr.setRequestHeader('Authorization',make_base_auth(sid,authToken));
     },
@@ -245,20 +255,27 @@ function updateMessageData() {
   });
 }
 
-function checkMessages() {
+function checkMessages(pickNumber) {
   updateMessageData();
   var repeat;
-
   currentMessagesLength = messageData.messages.length;
 
   if(currentMessagesLength > ogMessagesLength) {
-    for(var i = ogMessagesLength; i < currentMessagesLength-1; i++) {
+    for(var i = 0; i < currentMessagesLength-ogMessagesLength; i++) {
       var fromPhone = messageData.messages[i].from;
-      fromPhone = fromPhone.substring(2);
+      fromPhone = fromPhone.substring(2); //remove the +1 from the phone number
       var playerPicked = messageData.messages[i].body;
       if(fromPhone == currentPhone && containsPlayer(playerPicked)) {
         repeat = false;
-        //save pick to firebase at this point
+        var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+pickNumber);
+        pickRef.update({
+          owner: currentOwner,
+          team: currentTeam,
+          phone: currentPhone,
+          player: pickedPlayer,
+          playerTeam: pickedPlayerTeam,
+          playerPosition: pickedPlayerPosition
+        });
         break;
       } else {
         repeat = true;
@@ -269,19 +286,19 @@ function checkMessages() {
   }
 
   if(repeat) {
-    setTimeout(checkMessages,5000);
+    setTimeout(checkMessages,4000,pickNumber);
   }
 }
 
 function containsPlayer(playerName) {
   var contains;
 
-  for (var i = 0; i < data.Players.length; i++) {
-    if(data.Players[i].displayName == playerName) {
+  for (var i = 0; i < playerData.Players.length; i++) {
+    if(playerData.Players[i].displayName == playerName) {
       contains = true;
-      pickedPlayer = data.Players[i].displayName;
-      pickedPlayerTeam = data.Players[i].team;
-      pickedPlayerPosition = data.Players[i].position;
+      pickedPlayer = playerData.Players[i].displayName;
+      pickedPlayerTeam = playerData.Players[i].team;
+      pickedPlayerPosition = playerData.Players[i].position;
       break;
     } else {
       contains = false;
