@@ -137,7 +137,9 @@ function initiateCountdown() {
       }
   });
 
-  setTimeout(startCountdown,100);
+  countdown.start("05:00");
+
+  setTimeout(showCountdown,400);
 }
 
 function showCountdown() {
@@ -148,8 +150,7 @@ function stopAlarm() {
   alarm.pause();
 }
 
-function startCountdown() {
-  countdown.start("05:00");
+function showCountdown() {
   document.getElementById('timer').style.zIndex = 1000;
 }
 
