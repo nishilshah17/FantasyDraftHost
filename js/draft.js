@@ -7,8 +7,8 @@ var messageData;
 var ogMessagesLength;
 var currentMessagesLength;
 
-var ticking;
-var alarm;
+var ticking = new Audio("audio/ticking.wav");
+var alarm = new Audio("audio/alarm.wav");
 
 //information for team on the clock
 var currentTeam;
@@ -70,11 +70,7 @@ $(document).ready(function() {
             cell = $('<th>'+(y+1)+'</th>');
           } else {
             pickCounter++;
-            if(y % 2 == 0) {
-              var currentOwner = owners[x-1];
-            } else {
-              var currentOwner = owners[owners.length-x];
-            }
+            var currentOwner = owners[pickCounter-1];
             if(players[pickCounter-1] == "null") {
               cell = $('<th id="'+pickCounter+'">'+pickCounter+'<br/>'+currentOwner+'</th>');
             } else {
@@ -111,7 +107,6 @@ $(document).ready(function() {
 });
 
 function initiateCountdown() {
-  document.getElementById('timer').style.zIndex = 1000;
 
   ticking = new Audio("audio/ticking.wav");
   alarm = new Audio("audio/alarm.wav");
@@ -142,7 +137,8 @@ function initiateCountdown() {
       }
   });
 
-  setTimeout(startCountdown,500);
+  document.getElementById('timer').style.zIndex = 1000;
+  setTimeout(startCountdown,100);
 }
 
 function showCountdown() {
@@ -162,7 +158,9 @@ function resumeCountdown() {
 }
 
 function pauseCountdown() {
-  countdown.pause();
+  if(countdown != undefined) {
+    countdown.pause();
+  }
   ticking.pause();
   alarm.pause();
 }
@@ -182,8 +180,8 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
     pauseCountdown();
     document.getElementById('timer').style.zIndex = -1000;
     document.getElementById('pickin').style.zIndex = 2000;
-    topp.push(currentTeam);
-    topp.push(currentOwner);
+    topp.push(teams[counter-1]);
+    topp.push(owners[counter-1]);
     topp.push(players[counter-1]);
     topp.push(playerTeams[counter-1]);
     topp.push(playerPositions[counter-1]);
@@ -191,24 +189,24 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
   } else {
     initiateCountdown();
   }
+  if(counter < players.length) {
+    currentTeam = teams[counter];
+    currentOwner = owners[counter];
+    currentPhone = phones[counter];
 
-  currentTeam = teams[counter];
-  currentOwner = owners[counter];
-  currentPhone = phones[counter];
+    if(counter > 0) {
+      var previousCell = document.getElementById(counter);
+      previousCell.className = "";
+    }
+    var cell = document.getElementById(counter+1);
+    cell.className += "currentPick";
+    $('#teamName').empty();
+    $('#teamName').append(currentTeam);
 
-  if(counter > 0) {
-    var previousCell = document.getElementById(counter);
-    previousCell.className = "";
+    updateMessageData();
+    ogMessagesLength = messageData.messages.length;
+    checkMessages(counter+1);
   }
-  var cell = document.getElementById(counter+1);
-  cell.className += "currentPick";
-  $('#teamName').empty();
-  $('#teamName').append(currentTeam);
-
-  updateMessageData();
-  ogMessagesLength = messageData.messages.length;
-  checkMessages(counter+1);
-
 }
 
 function announcePick() {
@@ -318,7 +316,7 @@ function nothing() {
 }
 
 function sleep(miliseconds) {
- var currentTime = new Date().getTime();
- while (currentTime + miliseconds >= new Date().getTime()) {
- }
+  var currentTime = new Date().getTime();
+  while (currentTime + miliseconds >= new Date().getTime()) {
+  }
 }
