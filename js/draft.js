@@ -274,7 +274,7 @@ function checkMessages(pickNumber) {
     var fromPhone = messageData.messages[i].from;
     fromPhone = fromPhone.substring(2); //remove the +1 from the phone number
     var playerPicked = messageData.messages[i].body;
-    if(fromPhone == currentPhone && containsPlayer(playerPicked)) {
+    if(fromPhone == currentPhone && validPlayer(playerPicked)) {
       repeat = false;
       var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+pickNumber);
       pickRef.update({
@@ -296,22 +296,36 @@ function checkMessages(pickNumber) {
   }
 }
 
-function containsPlayer(playerName) {
-  var contains;
+function validPlayer(playerName) {
+  var valid = false;
 
+  //checks if player is real using the data obtained from the NFL Player API
   for (var i = 0; i < playerData.Players.length; i++) {
     if(playerData.Players[i].displayName == playerName) {
-      contains = true;
+      valid = true;
       pickedPlayer = playerData.Players[i].displayName;
       pickedPlayerTeam = playerData.Players[i].team;
       pickedPlayerPosition = playerData.Players[i].position;
       break;
-    } else {
-      contains = false;
     }
   }
+  if(!valid) {
+    return false;
+  }
 
-  return contains;
+  //checks if player has already been drafted
+  var picksRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/");
+  picksRef.once('value', function(picksSnapshot) {
+    picksSnapshot.forEach(function (pickSnapshot) {
+      var savedPlayerName = pickSnapshot.child('player').val();
+
+      if(playerName == savedPlayerName) {
+        valid = false;
+      }
+    });
+  });
+
+  return valid;
 }
 
 function make_base_auth(user, password) {
