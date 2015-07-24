@@ -137,7 +137,6 @@ function initiateCountdown() {
       }
   });
 
-  document.getElementById('timer').style.zIndex = 1000;
   setTimeout(startCountdown,100);
 }
 
@@ -151,6 +150,7 @@ function stopAlarm() {
 
 function startCountdown() {
   countdown.start("05:00");
+  document.getElementById('timer').style.zIndex = 1000;
 }
 
 function resumeCountdown() {
@@ -213,17 +213,6 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
   }
 }
 
-function announcePick() {
-  document.getElementById('pickin').style.zIndex = -2000;
-  $('#player').val(topp[2]+", "+topp[4]);
-  $('#playerTeam').attr('placeholder',topp[3]);
-  $('#team').val(topp[0]);
-  document.getElementById('pick').style.zIndex = 3000;
-  responsiveVoice.speak(topp[2], "UK English Male");
-  setTimeout(hidePick,3000);
-  setTimeout(initiateCountdown,4000);
-}
-
 function hidePick() {
   document.getElementById('pick').style.zIndex = -3000;
 }
@@ -234,6 +223,38 @@ function pauseForTeam() {
 
 function announceTeam() {
   responsiveVoice.speak(topp[0]+" selects ", "UK English Male", {onstart: nothing, onend: announcePick});
+}
+
+function announcePick() {
+  document.getElementById('pickin').style.zIndex = -2000;
+  $('#player').val(topp[2]+", "+topp[4]);
+  $('#playerTeam').attr('placeholder',topp[3]);
+  $('#team').val(topp[0]);
+  document.getElementById('pick').style.zIndex = 3000;
+  responsiveVoice.speak(topp[2], "UK English Male");
+  setTimeout(hidePick,3500);
+  setTimeout(playPlayerHighlightReel,3200);
+}
+
+function playPlayerHighlightReel() {
+  var source = 'videos/'+topp[2].replace(/\s+/g, '')+'.mp4';
+  $('#playerHighlightReel').attr('src',source);
+  var HTMLvideo = document.getElementById('playerHighlightReel');
+  HTMLvideo.addEventListener('ended',videoEnded,false);
+
+  HTMLvideo.addEventListener("loadedmetadata", function() {
+    if(!isNaN(HTMLvideo.duration)) {
+      HTMLvideo.play();
+      document.getElementById('playerHighlights').style.zIndex = 4000;
+    } else {
+      setTimeout(initiateCountdown,1500);
+    }
+  });
+}
+
+function videoEnded() {
+  document.getElementById('playerHighlights').style.zIndex = -4000;
+  setTimeout(initiateCountdown,1500);
 }
 
 function loadPlayerData() {

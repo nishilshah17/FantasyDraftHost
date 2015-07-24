@@ -39,6 +39,16 @@ table {
   height: 100%;
 }
 
+#playerHighlights {
+  z-index: -4000;
+  position:fixed;
+  top:0px;
+  left:0px;
+  background-color:black;
+  width: 100%;
+  height: 100%;
+}
+
 #pick {
   z-index: -3000;
   position:fixed;
