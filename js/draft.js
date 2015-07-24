@@ -4,8 +4,8 @@ var draftNotStarted = true;
 
 var playerData;
 var messageData;
-var ogMessagesLength;
-var currentMessagesLength;
+var firstMessageID;
+var currentMessageID;
 
 var ticking = new Audio("audio/ticking.wav");
 var alarm = new Audio("audio/alarm.wav");
@@ -204,7 +204,11 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
     $('#teamName').append(currentTeam);
 
     updateMessageData();
-    ogMessagesLength = messageData.messages.length;
+    if(messageData.messages.length > 0) {
+      firstMessageID = messageData.messages[0].sid;
+    } else {
+      firstMessageID = 0;
+    }
     checkMessages(counter+1);
   }
 }
@@ -256,31 +260,35 @@ function updateMessageData() {
 function checkMessages(pickNumber) {
   updateMessageData();
   var repeat;
-  currentMessagesLength = messageData.messages.length;
-
-  if(currentMessagesLength > ogMessagesLength) {
-    for(var i = 0; i < currentMessagesLength-ogMessagesLength; i++) {
-      var fromPhone = messageData.messages[i].from;
-      fromPhone = fromPhone.substring(2); //remove the +1 from the phone number
-      var playerPicked = messageData.messages[i].body;
-      if(fromPhone == currentPhone && containsPlayer(playerPicked)) {
-        repeat = false;
-        var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+pickNumber);
-        pickRef.update({
-          owner: currentOwner,
-          team: currentTeam,
-          phone: currentPhone,
-          player: pickedPlayer,
-          playerTeam: pickedPlayerTeam,
-          playerPosition: pickedPlayerPosition
-        });
-        break;
-      } else {
-        repeat = true;
-      }
-    }
+  if(messageData.messages.length > 0) {
+    currentMessageID = messageData.messages[0].sid;
   } else {
-    repeat = true;
+    currentMessageID = 0;
+  }
+
+  for(var i = 0; i < messageData.messages.length; i++) {
+    if(messageData.messages[i].sid == firstMessageID) {
+      repeat = true;
+      break;
+    }
+    var fromPhone = messageData.messages[i].from;
+    fromPhone = fromPhone.substring(2); //remove the +1 from the phone number
+    var playerPicked = messageData.messages[i].body;
+    if(fromPhone == currentPhone && containsPlayer(playerPicked)) {
+      repeat = false;
+      var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+pickNumber);
+      pickRef.update({
+        owner: currentOwner,
+        team: currentTeam,
+        phone: currentPhone,
+        player: pickedPlayer,
+        playerTeam: pickedPlayerTeam,
+        playerPosition: pickedPlayerPosition
+      });
+      break;
+    } else {
+      repeat = true;
+    }
   }
 
   if(repeat) {
