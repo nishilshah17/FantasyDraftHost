@@ -139,7 +139,7 @@ function initiateCountdown() {
 
   countdown.start("05:00");
 
-  setTimeout(showCountdown,400);
+  setTimeout(showCountdown,200);
 }
 
 function showCountdown() {
@@ -233,8 +233,8 @@ function announcePick() {
   $('#team').val(topp[0]);
   document.getElementById('pick').style.zIndex = 3000;
   responsiveVoice.speak(topp[2], "UK English Male");
-  setTimeout(hidePick,3500);
-  setTimeout(playPlayerHighlightReel,3200);
+  setTimeout(hidePick,4000);
+  setTimeout(playPlayerHighlightReel,3500);
 }
 
 function playPlayerHighlightReel() {
