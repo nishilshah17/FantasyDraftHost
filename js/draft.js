@@ -1,12 +1,14 @@
 var draftID;
 var countdown;
-var draftNotStarted = true;
+var draftActive = false;
 
+//data that needs to be cached
 var playerData;
 var messageData;
 var firstMessageID;
 var currentMessageID;
 
+//initialize audio files
 var ticking = new Audio("audio/ticking.wav");
 var alarm = new Audio("audio/alarm.wav");
 var ping = new Audio("audio/ping.mp3");
@@ -28,6 +30,7 @@ $(document).ready(function() {
   var numRounds;
 
   $('#draftIDSubmit').click(function() {
+    draftActive = true;
     loadPlayerData();
 
     draftID = $('#draftID').val();
@@ -83,7 +86,7 @@ $(document).ready(function() {
         table.append(row);
       }
       $('#draft').append(table);
-      if(draftNotStarted) {
+      if(draftActive) {
         nextPick(teams, owners, phones, players, playerTeams, playerPositions);
       }
     }, function (errorObject) {
@@ -171,26 +174,29 @@ function pauseCountdown() {
   alarm.pause();
 }
 
-var topp;
+var toppp;
 
 function nextPick(teams, owners, phones, players, playerTeams, playerPositions) {
 
   var draftTable = document.getElementById('draftTable');
 
   var counter = 0;
-  while(players[counter] != "null") {
+  while(players[counter] != "null" && counter < players.length) {
     counter++;
   }
   if(counter > 0) {
-    topp = [];
+    if(counter == players.length) {
+      draftActive = false;
+    }
+    toppp = [];
     pauseCountdown();
     document.getElementById('timer').style.zIndex = -1000;
     document.getElementById('pickin').style.zIndex = 2000;
-    topp.push(teams[counter-1]);
-    topp.push(owners[counter-1]);
-    topp.push(players[counter-1]);
-    topp.push(playerTeams[counter-1]);
-    topp.push(playerPositions[counter-1]);
+    toppp.push(teams[counter-1]);
+    toppp.push(owners[counter-1]);
+    toppp.push(players[counter-1]);
+    toppp.push(playerTeams[counter-1]);
+    toppp.push(playerPositions[counter-1]);
     responsiveVoice.speak("The pick is in", "UK English Male",{onstart: nothing, onend: pauseForTeam});
   } else {
     setTimeout(initiateCountdown,3000);
@@ -228,22 +234,22 @@ function pauseForTeam() {
 }
 
 function announceTeam() {
-  responsiveVoice.speak(topp[0]+" selects ", "UK English Male", {onstart: nothing, onend: announcePick});
+  responsiveVoice.speak(toppp[0]+" selects ", "UK English Male", {onstart: nothing, onend: announcePick});
 }
 
 function announcePick() {
   document.getElementById('pickin').style.zIndex = -2000;
-  $('#player').val(topp[2]+", "+topp[4]);
-  $('#playerTeam').attr('placeholder',topp[3]);
-  $('#team').val(topp[0]);
+  $('#player').val(toppp[2]+", "+toppp[4]);
+  $('#playerTeam').attr('placeholder',toppp[3]);
+  $('#team').val(toppp[0]);
   document.getElementById('pick').style.zIndex = 3000;
-  responsiveVoice.speak(topp[2], "UK English Male");
+  responsiveVoice.speak(toppp[2], "UK English Male");
   setTimeout(hidePick,4000);
   setTimeout(playPlayerHighlightReel,3500);
 }
 
 function playPlayerHighlightReel() {
-  var source = 'videos/'+topp[2].replace(/\s+/g, '')+'.mp4';
+  var source = 'videos/'+toppp[2].replace(/\s+/g, '')+'.mp4';
   $('#playerHighlightReel').attr('src',source);
   var HTMLvideo = document.getElementById('playerHighlightReel');
   HTMLvideo.addEventListener('ended',videoEnded,false);
@@ -255,12 +261,16 @@ function playPlayerHighlightReel() {
 }
 
 $("video").on("error", function() {
-  setTimeout(initiateCountdown,1750);
+  if(draftActive) {
+    setTimeout(initiateCountdown,1750);
+  }
 })
 
 function videoEnded() {
   document.getElementById('playerHighlights').style.zIndex = -4000;
-  setTimeout(initiateCountdown,1750);
+  if(draftActive) {
+    setTimeout(initiateCountdown,1750);
+  }
 }
 
 function loadPlayerData() {
@@ -363,11 +373,3 @@ function make_base_auth(user, password) {
 
 function nothing() {
 }
-
-function sleep(miliseconds) {
-  var currentTime = new Date().getTime();
-  while (currentTime + miliseconds >= new Date().getTime()) {
-  }
-}
-
-var validVideos = [];
