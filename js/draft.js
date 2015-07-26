@@ -9,6 +9,7 @@ var currentMessageID;
 
 var ticking = new Audio("audio/ticking.wav");
 var alarm = new Audio("audio/alarm.wav");
+var ping = new Audio("audio/ping.mp3");
 
 //information for team on the clock
 var currentTeam;
@@ -110,6 +111,7 @@ function initiateCountdown() {
 
   ticking = new Audio("audio/ticking.wav");
   alarm = new Audio("audio/alarm.wav");
+  ping = new Audio("audio/ping.mp3");
 
   countdown = Tock({
       countdown: true,
@@ -137,9 +139,11 @@ function initiateCountdown() {
       }
   });
 
-  countdown.start("05:00");
+  countdown.start("05:00"); //just to reset it
+  countdown.pause();
+  ping.play();
 
-  setTimeout(showCountdown,200);
+  setTimeout(showCountdown,250);
 }
 
 function showCountdown() {
@@ -152,6 +156,7 @@ function stopAlarm() {
 
 function showCountdown() {
   document.getElementById('timer').style.zIndex = 1000;
+  countdown.start("5:00");
 }
 
 function resumeCountdown() {
@@ -188,7 +193,7 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
     topp.push(playerPositions[counter-1]);
     responsiveVoice.speak("The pick is in", "UK English Male",{onstart: nothing, onend: pauseForTeam});
   } else {
-    initiateCountdown();
+    setTimeout(initiateCountdown,3000);
   }
   if(counter < players.length) {
     currentTeam = teams[counter];
@@ -244,18 +249,18 @@ function playPlayerHighlightReel() {
   HTMLvideo.addEventListener('ended',videoEnded,false);
 
   HTMLvideo.addEventListener("loadedmetadata", function() {
-    if(!isNaN(HTMLvideo.duration)) {
-      HTMLvideo.play();
-      document.getElementById('playerHighlights').style.zIndex = 4000;
-    } else {
-      setTimeout(initiateCountdown,1500);
-    }
+    HTMLvideo.play();
+    document.getElementById('playerHighlights').style.zIndex = 4000;
   });
 }
 
+$("video").on("error", function() {
+  setTimeout(initiateCountdown,1750);
+})
+
 function videoEnded() {
   document.getElementById('playerHighlights').style.zIndex = -4000;
-  setTimeout(initiateCountdown,1500);
+  setTimeout(initiateCountdown,1750);
 }
 
 function loadPlayerData() {
@@ -364,3 +369,5 @@ function sleep(miliseconds) {
   while (currentTime + miliseconds >= new Date().getTime()) {
   }
 }
+
+var validVideos = [];
