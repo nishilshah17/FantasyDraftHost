@@ -24,6 +24,7 @@ $('#submitButton').click(function () {
   var sportName = $('#sportSelect').val();
   var numRounds = $('#roundsSelect').val();
   var numTeams = $('#teamsSelect').val();
+  var timeLimit = $('#timePerPick').val();
   var teams = [];
   var owners = [];
   var phones = [];
@@ -69,7 +70,8 @@ $('#submitButton').click(function () {
     sport: sportName,
     rounds: numRounds,
     teams: numTeams,
-    picks: allPicks
+    picks: allPicks,
+    timePerPick: timeLimit
   });
 
   var draftID = newDraftRef.key();

@@ -1,6 +1,7 @@
 var draftID;
 var countdown;
 var draftActive = false;
+var timePerPick;
 
 //data that needs to be cached
 var playerData;
@@ -47,6 +48,7 @@ $(document).ready(function() {
 
       numRounds = draftSnapshot.child('rounds').val();
       var numPicks = draftSnapshot.child('picks').numChildren();
+      timePerPick = draftSnapshot.child('timePerPick').val();
 
       var counter = 0;
       draftSnapshot.child('picks').forEach(function(pickSnapshot) {
@@ -138,11 +140,11 @@ function initiateCountdown() {
         ticking.pause();
         alarm.play();
         setTimeout(stopAlarm, 4500);
-        //alert firebase its too late to experience this pick
+        //update firebase that the team selects no one
       }
   });
 
-  countdown.start("05:00"); //just to reset it
+  countdown.start(timePerPick); //just to reset it
   countdown.pause();
   ping.play();
 
@@ -159,7 +161,7 @@ function stopAlarm() {
 
 function showCountdown() {
   document.getElementById('timer').style.zIndex = 1000;
-  countdown.start("5:00");
+  countdown.start(timePerPick);
 }
 
 function resumeCountdown() {
