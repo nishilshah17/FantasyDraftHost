@@ -81,7 +81,8 @@ $(document).ready(function() {
             if(players[pickCounter-1] == "null") {
               cell = $('<th id="'+pickCounter+'">'+pickCounter+'<br/>'+currentOwner+'</th>');
             } else {
-              cell = $('<th id="'+pickCounter+'">'+players[pickCounter-1]+'<br/>'+currentOwner+'</th>');
+              var positionColor = getPositionColor(playerPositions[pickCounter-1]);
+              cell = $('<th bgcolor="'+positionColor+'" id="'+pickCounter+'"><b>'+players[pickCounter-1]+'</b><br/>'+currentOwner+'</th>');
             }
           }
           row.append(cell);
@@ -375,6 +376,23 @@ function validPlayer(playerName) {
   });
 
   return valid;
+}
+
+function getPositionColor(position) {
+  switch(position) {
+    case "QB":
+      return "FFC85A";
+    case "RB":
+      return "BBFF5A";
+    case "WR":
+      return "00EEEE";
+    case "TE":
+      return "FFAEEA";
+    case "DEF":
+      return "FF3F5A";
+    default:
+      return "FFFF91";
+  }
 }
 
 function make_base_auth(user, password) {
