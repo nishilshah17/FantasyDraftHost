@@ -350,7 +350,7 @@ function validPlayer(playerName) {
 
   //checks if player is real using the data obtained from the NFL Player API
   for (var i = 0; i < playerData.Players.length; i++) {
-    if(playerData.Players[i].displayName == playerName) {
+    if(playerData.Players[i].displayName.toUpperCase() === playerName.toUpperCase()) {
       valid = true;
       pickedPlayer = playerData.Players[i].displayName;
       pickedPlayerTeam = playerData.Players[i].team;
@@ -368,7 +368,7 @@ function validPlayer(playerName) {
     picksSnapshot.forEach(function (pickSnapshot) {
       var savedPlayerName = pickSnapshot.child('player').val();
 
-      if(playerName == savedPlayerName) {
+      if(playerName.toUpperCase() === savedPlayerName.toUpperCase()) {
         valid = false;
       }
     });
