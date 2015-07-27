@@ -2,6 +2,7 @@ var draftID;
 var countdown;
 var draftActive = false;
 var timePerPick;
+var currentPick;
 
 //data that needs to be cached
 var playerData;
@@ -140,7 +141,14 @@ function initiateCountdown() {
         ticking.pause();
         alarm.play();
         setTimeout(stopAlarm, 4500);
+
         //update firebase that the team selects no one
+        var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+currentPick);
+        pickRef.update({
+          player: "No One",
+          playerTeam: "Timed Out",
+          playerPosition: "null"
+        });
       }
   });
 
@@ -186,6 +194,8 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
   while(players[counter] != "null" && counter < players.length) {
     counter++;
   }
+  currentPick = counter+1;
+
   if(counter > 0) {
     if(counter == players.length) {
       draftActive = false;
