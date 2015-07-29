@@ -48,6 +48,40 @@ body {
   cursor: hand;
 }
 
+#bottom {
+  height: 100%;
+}
+
+#brady {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  float: left;
+}
+
+#brown {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  float: right;
+}
+
+#charles {
+  margin-top: 0.25em;
+  position: relative;
+  max-width: 80%;
+  max-height: 80%;
+  float: right;
+}
+
+#description {
+  float: left;
+  padding-left: 3em;
+  padding-top: 3em;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
 .setup-flat-button {
   position: relative;
   margin-left: auto;
