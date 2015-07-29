@@ -228,6 +228,7 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
     $('#teamName').empty();
     $('#teamName').append(currentTeam);
 
+    checkedMessages = [];
     updateMessageData();
     if(messageData.messages.length > 0) {
       firstMessageID = messageData.messages[0].sid;
@@ -324,7 +325,7 @@ function checkMessages(pickNumber) {
     var fromPhone = messageData.messages[i].from;
     fromPhone = fromPhone.substring(2); //remove the +1 from the phone number
     var playerPicked = messageData.messages[i].body;
-    if(fromPhone == currentPhone && validPlayer(playerPicked)) {
+    if(fromPhone == currentPhone && validPlayer(playerPicked, messageData.messages[i].sid)) {
       repeat = false;
       var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+pickNumber);
       pickRef.update({
@@ -346,8 +347,11 @@ function checkMessages(pickNumber) {
   }
 }
 
-function validPlayer(playerName) {
+var checkedMessages = [];
+
+function validPlayer(playerName, messageSID) {
   var valid = false;
+  var auth = make_base_auth(sid,authToken);
 
   //checks if player is real using the data obtained from the NFL Player API
   for (var i = 0; i < playerData.Players.length; i++) {
@@ -360,6 +364,25 @@ function validPlayer(playerName) {
     }
   }
   if(!valid) {
+    if(!(checkedMessages.indexOf(messageSID) > -1)) {
+      $.ajax({
+        url: 'https://api.twilio.com/2010-04-01/Accounts/'+sid+'/Messages.json',
+        type: 'post',
+        dataType: 'json',
+        async: false,
+        data: {
+          "To": currentPhone,
+          "From": twilioNumber,
+          "Body": "That is not a valid player, bro (or you may have misspelled the name). Pick again."
+        },
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader('Authorization',auth);
+        },
+        success: function(data) {
+          checkedMessages.push(messageSID);
+        }
+      });
+    }
     return false;
   }
 
@@ -370,6 +393,24 @@ function validPlayer(playerName) {
       var savedPlayerName = pickSnapshot.child('player').val();
 
       if(playerName.toUpperCase() === savedPlayerName.toUpperCase()) {
+        if(!(checkedMessages.indexOf(messageSID) > -1)) {
+          $.ajax({
+            url: 'https://api.twilio.com/2010-04-01/Accounts/'+sid+'/Messages.json',
+            type: 'post',
+            dataType: 'json',
+            data: {
+              "To": currentPhone,
+              "From": twilioNumber,
+              "Body": savedPlayerName+" has already been selected. Pick again."
+            },
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader('Authorization',auth);
+            },
+            success: function(data) {
+              checkedMessages.push(messageSID);
+            }
+          });
+        }
         valid = false;
       }
     });
