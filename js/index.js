@@ -41,7 +41,7 @@ $(document).ready(function() {
       var authToken = userSnapshot.child('authToken').val();
       var number = userSnapshot.child('number').val();
 
-      if(accountSID == null || authToken == null || number == null) {
+      if(accountSID == null || accountSID == "" || authToken == null || authToken == "" || number == null || number == "") {
         document.getElementById('twilioNotSet').style.visibility = 'visible';
         document.getElementById('setup').disabled = true;
         document.getElementById('start').disabled = true;
