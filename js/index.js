@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  if(localStorage.getItem('uid').length > 0) {
+  if(localStorage.getItem('uid').length > 0 && localStorage.getItem('uid') != null) {
     authorized();
   }
 
@@ -11,6 +11,13 @@ $(document).ready(function() {
         console.log("Login Failed!", error);
       } else {
         console.log("Authenticated successfully with payload:", authData);
+
+        var userRef = new Firebase("https://fantasy-draft-host.firebaseio.com/users/"+authData.uid);
+        userRef.update({
+          accountSID: "null",
+          authToken: "null",
+          number: "null"
+        });
         localStorage.setItem('uid',authData.uid);
         localStorage.setItem('displayName',authData.google.displayName);
         authorized();

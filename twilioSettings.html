@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/twilioSettings.css" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:700' rel='stylesheet' type='text/css'>
+
+    <!--jQuery-->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  </head>
+  <body>
+    <h1 class="openSans" id="twilioSettingsTitle">twilio settings</h1>
+    <ul class="text-input-underline input-list">
+      <li>
+        <input type="text" id="accountSID" class="twilio-input" placeholder="Account SID" />
+      </li>
+      <li>
+        <input type="text" id="authToken" class="twilio-input" placeholder="AuthToken" />
+      </li>
+      <li>
+        <input type="text" id="twilioNumber" class="twilio-input" placeholder="Twilio Number (with country code, no dashes or spaces)" />
+      </li>
+      <li>
+        <input type="submit" value="save settings" id="submitButton" class="submit-flat-button" />
+      </li>
+      <li>
+        <input type="submit" value="home" id="homeButton" class="home-flat-button" />
+      </li>
+    </ul>
+  </body>
+    <script src="https://cdn.firebase.com/js/client/2.2.7/firebase.js"></script>
+    <script type="text/javascript" src="js/twilioSettings.js"></script>
+</html>
