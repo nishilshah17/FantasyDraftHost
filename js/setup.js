@@ -76,33 +76,8 @@ $('#submitButton').click(function () {
     userID: uid
   });
 
-  messageOwners(phones);
-
   var draftID = newDraftRef.key();
   $('#setupBody').empty();
   $('#setupBody').append('<div class="draftID">draft set up successfully</div>');
   $('#setupBody').append('<input type="submit" value="home" class="home-flat-button" onclick=window.location.href="index.html" />');
 });
-
-function messageOwners(phones) {
-  var auth = make_base_auth(sid,authToken);
-
-  for(var i = 0; i < phones.length; i++) {
-    $.ajax({
-      url: 'https://api.twilio.com/2010-04-01/Accounts/'+sid+'/Messages.json',
-      type: 'post',
-      dataType: 'json',
-      data: {
-        "To": phones[i],
-        "From": twilioNumber,
-        "Body": "Welcome to Fantasy Draft Host!"
-      },
-      beforeSend: function(xhr) {
-        xhr.setRequestHeader('Authorization',auth);
-      },
-      success: function(data) {
-      }
-    });
-  }
-
-}

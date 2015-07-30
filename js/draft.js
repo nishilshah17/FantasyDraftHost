@@ -26,6 +26,11 @@ var pickedPlayer;
 var pickedPlayerTeam;
 var pickedPlayerPosition;
 
+//users twilio information
+var accountSID;
+var authToken;
+var twilioNumber;
+
 $(document).ready(function() {
   var pickCounter;
   var teams, owners, phones;
@@ -34,6 +39,7 @@ $(document).ready(function() {
   userID = localStorage.getItem('uid');
 
   var draftsRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts");
+  var userRef = new Firebase("https://fantasy-draft-host.firebaseio.com/users/"+userID);
 
   draftsRef.once('value', function(draftsSnapshot) {
 
@@ -60,6 +66,12 @@ $(document).ready(function() {
     $('#draftList').append(draftListTable);
   });
 
+  userRef.once('value', function(userSnapshot) {
+    accountSID = userSnapshot.child('accountSID').val();
+    authToken = userSnapshot.child('authToken').val();
+    twilioNumber = userSnapshot.child('number').val();
+  });
+
   $('#draftList').on('click','input', function() {
     document.getElementById('draftList').style.zIndex = -2125125;
 
@@ -68,6 +80,37 @@ $(document).ready(function() {
 
     draftID = $(this).data('id');
     var draftRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID);
+
+    draftRef.once("value", function(draftSnapshot) {
+      var teamCounter = 0;
+      var limit = parseInt(draftSnapshot.child('teams').val());
+
+      var picksSnapshot = draftSnapshot.child('picks');
+      picksSnapshot.forEach(function(pick) {
+        teamCounter++;
+        var teamPhone = pick.child('phone').val();
+
+        $.ajax({
+          url: 'https://api.twilio.com/2010-04-01/Accounts/'+accountSID+'/Messages.json',
+          type: 'post',
+          dataType: 'json',
+          data: {
+            "To": teamPhone,
+            "From": twilioNumber,
+            "Body": "Welcome to Fantasy Draft Host!"
+          },
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader('Authorization',make_base_auth(accountSID,authToken));
+          },
+          success: function(data) {
+          }
+        });
+
+        if(teamCounter == limit) {
+          return true;
+        }
+      });
+    });
 
     draftRef.on("value", function(draftSnapshot) {
       pickCounter = 0;
@@ -326,12 +369,12 @@ function loadPlayerData() {
 
 function updateMessageData() {
   $.ajax({
-    url: 'https://api.twilio.com/2010-04-01/Accounts/'+sid+'/Messages.json',
+    url: 'https://api.twilio.com/2010-04-01/Accounts/'+accountSID+'/Messages.json',
     type: 'get',
     dataType: 'json',
     async: false,
     beforeSend: function(xhr) {
-      xhr.setRequestHeader('Authorization',make_base_auth(sid,authToken));
+      xhr.setRequestHeader('Authorization',make_base_auth(accountSID,authToken));
     },
     success: function(data) {
       messageData = data;
@@ -382,7 +425,7 @@ var checkedMessages = [];
 
 function validPlayer(playerName, messageSID) {
   var valid = false;
-  var auth = make_base_auth(sid,authToken);
+  var auth = make_base_auth(accountSID,authToken);
 
   //checks if player is real using the data obtained from the NFL Player API
   for (var i = 0; i < playerData.Players.length; i++) {
@@ -397,7 +440,7 @@ function validPlayer(playerName, messageSID) {
   if(!valid) {
     if(!(checkedMessages.indexOf(messageSID) > -1)) {
       $.ajax({
-        url: 'https://api.twilio.com/2010-04-01/Accounts/'+sid+'/Messages.json',
+        url: 'https://api.twilio.com/2010-04-01/Accounts/'+accountSID+'/Messages.json',
         type: 'post',
         dataType: 'json',
         async: false,
@@ -426,7 +469,7 @@ function validPlayer(playerName, messageSID) {
       if(playerName.toUpperCase() === savedPlayerName.toUpperCase()) {
         if(!(checkedMessages.indexOf(messageSID) > -1)) {
           $.ajax({
-            url: 'https://api.twilio.com/2010-04-01/Accounts/'+sid+'/Messages.json',
+            url: 'https://api.twilio.com/2010-04-01/Accounts/'+accountSID+'/Messages.json',
             type: 'post',
             dataType: 'json',
             data: {
