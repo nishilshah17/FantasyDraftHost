@@ -28,6 +28,7 @@ $('#submitButton').click(function () {
   var teams = [];
   var owners = [];
   var phones = [];
+  var uid = localStorage.getItem('uid');
 
   for(var i = 0; i < numTeams; i++) {
     teams.push($('#team'+(i+1)).val());
@@ -71,14 +72,15 @@ $('#submitButton').click(function () {
     rounds: numRounds,
     teams: numTeams,
     picks: allPicks,
-    timePerPick: timeLimit
+    timePerPick: timeLimit,
+    userID: uid
   });
 
   messageOwners(phones);
 
   var draftID = newDraftRef.key();
   $('#setupBody').empty();
-  $('#setupBody').append('<div class="draftID">please note your draft id: <br/>'+draftID+'</div>');
+  $('#setupBody').append('<div class="draftID">draft set up successfully</div>');
   $('#setupBody').append('<input type="submit" value="home" class="home-flat-button" onclick=window.location.href="index.html" />');
 });
 
