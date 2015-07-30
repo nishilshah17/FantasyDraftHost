@@ -12,6 +12,7 @@ $(document).ready(function() {
       } else {
         console.log("Authenticated successfully with payload:", authData);
         localStorage.setItem('uid',authData.uid);
+        localStorage.setItem('displayName',authData.google.displayName);
         authorized();
       }
     });
@@ -19,6 +20,7 @@ $(document).ready(function() {
 
   function authorized() {
     document.getElementById('afterAuth').style.zIndex = 1000;
+    document.getElementById('afterAuthTitle').innerHTML = localStorage.getItem('displayName')+"'s fantasy draft host";
   }
 
 });

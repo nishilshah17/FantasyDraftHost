@@ -59,6 +59,15 @@ table {
   height: 100%;
 }
 
+#draftList {
+  position: fixed;
+  top:0px;
+  left:0px;
+  background-color: white;
+  width: 100%;
+  height: 100%;
+}
+
 #countdown_clock {
   font-size: 275px;
   text-align: center;
@@ -144,6 +153,12 @@ table {
   box-shadow: none;
 }
 
+#draftListTable {
+  width: 100%;
+  height: auto;
+  margin-top: 4em;
+}
+
 .flat-table {
 	border-collapse:collapse;
 	font-family: 'Open Sans', sans-serif;
@@ -205,6 +220,31 @@ table {
   box-shadow: none;
 }
 
+.start-draft-flat-button {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 60px;
+  padding: 0;
+  font-size: 22px;
+  color: white;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  background: #1abc9c;
+  border: 0;
+  border-bottom: 2px solid #12ab8d;
+  cursor: pointer;
+  -webkit-box-shadow: inset 0 -2px #12ab8d;
+  box-shadow: inset 0 -2px #12ab8d;
+}
+
+.start-draft-flat-button:active {
+  top: 1px;
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
 @keyframes currentPicker {
   0%   {background-color: #FFFFFF;}
   10%  {background-color: #FFCCCC;}
@@ -230,4 +270,10 @@ table {
   background-color: #FFFFFF;
   -webkit-animation: currentPicker 2.5s infinite;
   animation: currentPicker 2.5s infinite;
+}
+
+.openSans {
+  font-family: 'Open Sans', sans-serif;
+  text-align: center;
+  padding-top: 5%;
 }

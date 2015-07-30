@@ -3,6 +3,7 @@ var countdown;
 var draftActive = false;
 var timePerPick;
 var currentPick;
+var userID;
 
 //data that needs to be cached
 var playerData;
@@ -30,12 +31,42 @@ $(document).ready(function() {
   var teams, owners, phones;
   var players, playerTeams, playerPositions;
   var numRounds;
+  userID = localStorage.getItem('uid');
 
-  $('#draftIDSubmit').click(function() {
+  var draftsRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts");
+
+  draftsRef.once('value', function(draftsSnapshot) {
+
+    $('#draftList').empty();
+    var draftListTable = $("<table cellpadding='30'></table>");
+    draftListTable.attr('id','draftListTable');
+    draftListTable.attr('class','flat-table flat-table-3');
+    var titleRow = $('<tr><th><b>League</b></th><th><b>Sport</b></th><th><b>Teams</b></th><th><b>Rounds</b></th><th><b>Timer</b></th><th><b>Draft</b></th></tr>');
+    draftListTable.append(titleRow);
+
+    draftsSnapshot.forEach(function(draftSnapshot) {
+      if(draftSnapshot.child('userID').val() == userID) {
+        var draftRow = $('<tr></tr>');
+        draftRow.append($('<th>'+draftSnapshot.child('leagueName').val()+'</th>'));
+        draftRow.append($('<th>'+draftSnapshot.child('sport').val()+'</th>'));
+        draftRow.append($('<th>'+draftSnapshot.child('teams').val()+'</th>'));
+        draftRow.append($('<th>'+draftSnapshot.child('rounds').val()+'</th>'));
+        draftRow.append($('<th>'+draftSnapshot.child('timePerPick').val()+'</th>'));
+        draftRow.append($('<th><input type="submit" value="Start Draft" class="start-draft-flat-button draftIDSubmit" data-id="'+draftSnapshot.key()+'" /></th>'));
+        draftListTable.append(draftRow);
+      }
+    });
+    $('#draftList').append("<h1 class='openSans'>"+localStorage.getItem("displayName")+"'s drafts</h1>");
+    $('#draftList').append(draftListTable);
+  });
+
+  $('#draftList').on('click','input', function() {
+    document.getElementById('draftList').style.zIndex = -2125125;
+
     draftActive = true;
     loadPlayerData();
 
-    draftID = $('#draftID').val();
+    draftID = $(this).data('id');
     var draftRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID);
 
     draftRef.on("value", function(draftSnapshot) {
@@ -65,7 +96,7 @@ $(document).ready(function() {
       $('#draft').empty();
       var table = $("<table></table>");
       table.attr('id','draftTable');
-      table.attr('class','flat-table flat-table-3')
+      table.attr('class','flat-table flat-table-3');
 
       for(var y = 0; y < numRounds; y++) {
         var row = $("<tr></tr>");
