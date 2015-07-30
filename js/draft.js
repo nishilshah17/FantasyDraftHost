@@ -44,7 +44,7 @@ $(document).ready(function() {
   draftsRef.once('value', function(draftsSnapshot) {
 
     $('#draftList').empty();
-    var draftListTable = $("<table cellpadding='30'></table>");
+    var draftListTable = $("<table cellpadding='25'></table>");
     draftListTable.attr('id','draftListTable');
     draftListTable.attr('class','flat-table flat-table-3');
     var titleRow = $('<tr><th><b>League</b></th><th><b>Sport</b></th><th><b>Teams</b></th><th><b>Rounds</b></th><th><b>Timer</b></th><th><b>Draft</b></th></tr>');
