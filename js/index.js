@@ -14,9 +14,7 @@ $(document).ready(function() {
 
         var userRef = new Firebase("https://fantasy-draft-host.firebaseio.com/users/"+authData.uid);
         userRef.update({
-          accountSID: "null",
-          authToken: "null",
-          number: "null"
+          displayName: authData.google.displayName
         });
         localStorage.setItem('uid',authData.uid);
         localStorage.setItem('displayName',authData.google.displayName);
@@ -28,6 +26,19 @@ $(document).ready(function() {
   function authorized() {
     document.getElementById('afterAuth').style.zIndex = 1000;
     document.getElementById('afterAuthTitle').innerHTML = localStorage.getItem('displayName')+"'s fantasy draft host";
+
+    var userRef = new Firebase("https://fantasy-draft-host.firebaseio.com/users/"+localStorage.getItem('uid'));
+    userRef.once('value', function(userSnapshot) {
+      var accountSID = userSnapshot.child('accountSID').val();
+      var authToken = userSnapshot.child('authToken').val();
+      var number = userSnapshot.child('number').val();
+
+      if(accountSID == null || authToken == null || number == null) {
+        document.getElementById('twilioNotSet').style.visibility = 'visible';
+        document.getElementById('setup').disabled = true;
+        document.getElementById('start').disabled = true;
+      }
+    });
   }
 
 });

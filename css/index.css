@@ -82,6 +82,25 @@ body {
   font-weight: 400;
 }
 
+#twilioArrow {
+  padding-top: 0.5em;
+  height: 40px;
+  width: auto;
+  margin: 0 auto;
+}
+
+#arrowHolder {
+  height: 3.5em;
+  width: 100%;
+}
+
+#twilioNotSet {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  visibility: hidden;
+}
+
 .setup-flat-button {
   position: relative;
   margin-left: auto;

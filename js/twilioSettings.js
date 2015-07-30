@@ -3,13 +3,13 @@ $(document).ready(function() {
   var userRef = new Firebase("https://fantasy-draft-host.firebaseio.com/users/"+localStorage.getItem('uid'));
 
   userRef.once('value', function(userSnapshot) {
-    if(userSnapshot.child('accountSID').val() != "null") {
+    if(userSnapshot.child('accountSID').val() != null) {
       $('#accountSID').val(userSnapshot.child('accountSID').val());
     }
-    if(userSnapshot.child('authToken').val() != "null") {
+    if(userSnapshot.child('authToken').val() != null) {
       $('#authToken').val(userSnapshot.child('authToken').val());
     }
-    if(userSnapshot.child('number').val() != "null") {
+    if(userSnapshot.child('number').val() != null) {
       $('#twilioNumber').val(userSnapshot.child('number').val());
     }
   });

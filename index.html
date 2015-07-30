@@ -31,9 +31,15 @@
     </div>
     <div id="afterAuth">
       <h1 id="afterAuthTitle" class="openSans">fantasy draft host</h1>
-      <input type="submit" onclick="window.location = 'setup.html'" value="setup draft" class="setup-flat-button"><br />
-      <input type="submit" onclick="window.location = 'draft.html'" value="start draft" class="start-flat-button"><br />
-      <input type="submit" onclick="window.location = 'twilioSettings.html'" value="twilio settings" class="settings-flat-button">
+      <input id="setup" type="submit" onclick="window.location = 'setup.html'" value="setup draft" class="setup-flat-button"><br />
+      <input id="start" type="submit" onclick="window.location = 'draft.html'" value="start draft" class="start-flat-button"><br />
+      <input id="settings" type="submit" onclick="window.location = 'twilioSettings.html'" value="twilio settings" class="settings-flat-button">
+      <div id="twilioNotSet">
+        <div id="arrowHolder">
+          <img id="twilioArrow" src="images/arrow.png" />
+        </div>
+        <h3 id="configureSettings" class="openSans">configure settings first</h3>
+      </div>
     </div>
   </body>
     <script src="https://cdn.firebase.com/js/client/2.2.7/firebase.js"></script>
