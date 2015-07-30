@@ -1,6 +1,7 @@
 $(document).ready(function() {
-
-  if(localStorage.getItem('uid').length > 0 && localStorage.getItem('uid') != null) {
+  if(localStorage.getItem('uid') == null) {
+    console.log("not authorized");
+  } else {
     authorized();
   }
 
@@ -21,6 +22,13 @@ $(document).ready(function() {
         authorized();
       }
     });
+  });
+
+  $('#signout').click(function() {
+    localStorage.removeItem('uid');
+    localStorage.removeItem('displayName');
+    document.getElementById('afterAuth').style.zIndex = -1000;
+    location.reload(true);
   });
 
   function authorized() {
