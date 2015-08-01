@@ -22,6 +22,11 @@ $(document).ready(function() {
     var sid = $('#accountSID').val();
     var token = $('#authToken').val();
     var num = $('#twilioNumber').val();
+    sid = sid.replace(/\s+/g, '');
+    token = token.replace(/\s+/g, '');
+    num = num.replace(/\s+/g, '');
+    num = num.replace(/\(|\)/g,'');
+    num = num.replace(/-/g, "");
 
     userRef.update({
       accountSID: sid,
