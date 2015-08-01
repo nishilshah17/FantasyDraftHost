@@ -14,6 +14,7 @@ $('#teamsSelect').change(function() {
     for(var i = 0; i < maxInputFields; i++) {
       $('#teamsInputList').append('<input type="text" id="team'+(i+1)+'" class="team-sub-input" placeholder="team" /><input type="text" id="owner'+(i+1)+'" class="team-sub-input" placeholder="owner" /><input type="text" id="phone'+(i+1)+'" class="team-sub-input" placeholder="phone number" />')
     }
+    $('#teamsInputList').append('<h4 class="openSans">owners can only text in their picks through their own phones</h4>');
   }
 });
 

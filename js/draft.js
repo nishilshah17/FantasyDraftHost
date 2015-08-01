@@ -4,6 +4,7 @@ var draftActive = false;
 var timePerPick;
 var currentPick;
 var userID;
+var videoReadyToPlay;
 
 //data that needs to be cached
 var playerData;
@@ -144,6 +145,7 @@ $(document).ready(function() {
       for(var y = 0; y < numRounds; y++) {
         var row = $("<tr></tr>");
         row.attr('id','round'+(y+1));
+        var rowCells = [];
 
         for(var x = 0; x < (teams.length/numRounds)+1; x++) {
           var cell;
@@ -159,7 +161,18 @@ $(document).ready(function() {
               cell = $('<th bgcolor="'+positionColor+'" id="'+pickCounter+'"><b>'+players[pickCounter-1]+'</b><br/>'+currentOwner+'</th>');
             }
           }
-          row.append(cell);
+          rowCells.push(cell);
+        }
+
+        row.append(rowCells[0]);
+        if(y % 2 == 0) {
+          for (var i = 1; i < rowCells.length; i++) {
+            row.append(rowCells[i]);
+          }
+        } else {
+          for (var i = rowCells.length-1; i > 0; i--) {
+            row.append(rowCells[i]);
+          }
         }
         table.append(row);
       }
@@ -266,6 +279,7 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
   var draftTable = document.getElementById('draftTable');
 
   var counter = 0;
+  videoReadyToPlay = true;
   while(players[counter] != "null" && counter < players.length) {
     counter++;
   }
@@ -284,6 +298,9 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
     toppp.push(players[counter-1]);
     toppp.push(playerTeams[counter-1]);
     toppp.push(playerPositions[counter-1]);
+    var source = 'videos/'+toppp[2].replace(/\s+/g, '')+'.mp4';
+    $('#playerHighlightReel').attr('src',source);
+    $('#playerHighlightReel').attr('preload','auto');
     responsiveVoice.speak("The pick is in", "UK English Male",{onstart: nothing, onend: pauseForTeam});
   } else {
     setTimeout(initiateCountdown,3000);
@@ -337,20 +354,19 @@ function announcePick() {
 }
 
 function playPlayerHighlightReel() {
-  var source = 'videos/'+toppp[2].replace(/\s+/g, '')+'.mp4';
-  $('#playerHighlightReel').attr('src',source);
   var HTMLvideo = document.getElementById('playerHighlightReel');
   HTMLvideo.addEventListener('ended',videoEnded,false);
-
-  HTMLvideo.addEventListener("loadedmetadata", function() {
+  if(videoReadyToPlay) {
     HTMLvideo.play();
     document.getElementById('playerHighlights').style.zIndex = 4000;
-  });
+  } else {
+    setTimeout(initiateCountdown, 1750);
+  }
 }
 
 $("video").on("error", function() {
   if(draftActive) {
-    setTimeout(initiateCountdown,1750);
+    videoReadyToPlay = false;
   }
 })
 

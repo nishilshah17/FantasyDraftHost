@@ -141,9 +141,16 @@ ul.input-list li {
   box-shadow: inset 0 -2px #db4334;
   margin-top: 1em;
 }
+
 .home-flat-button:active {
   top: 1px;
   outline: none;
   -webkit-box-shadow: none;
   box-shadow: none;
+}
+
+.openSans {
+  font-family: 'Open Sans', sans-serif;
+  text-align: center;
+  padding-top: 1em;
 }
