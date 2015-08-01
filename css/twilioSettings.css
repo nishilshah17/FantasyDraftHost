@@ -94,8 +94,11 @@ ul.input-list li {
   box-shadow: none;
 }
 
+#twilioSettingsTitle {
+  padding-top: 5%;
+}
+
 .openSans {
   text-align: center;
-  padding-top: 5%;
   font-family: 'Open Sans', sans-serif;
 }
