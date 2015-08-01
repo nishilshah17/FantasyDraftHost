@@ -231,13 +231,8 @@ function initiateCountdown() {
         alarm.play();
         setTimeout(stopAlarm, 4500);
 
-        //update firebase that the team selects no one
-        var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+currentPick);
-        pickRef.update({
-          player: "No One",
-          playerTeam: "Timed Out",
-          playerPosition: "null"
-        });
+        //check messages one last time
+        checkMessages(true);
       }
   });
 
@@ -328,7 +323,7 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
     } else {
       firstMessageID = 0;
     }
-    checkMessages(counter+1);
+    checkMessages(false);
   }
 }
 
@@ -402,7 +397,7 @@ function updateMessageData() {
   });
 }
 
-function checkMessages(pickNumber) {
+function checkMessages(timeIsOut) {
   updateMessageData();
   var repeat;
   if(messageData.messages.length > 0) {
@@ -436,8 +431,16 @@ function checkMessages(pickNumber) {
     }
   }
 
-  if(repeat) {
-    setTimeout(checkMessages,4000,pickNumber);
+  if(repeat && !timeIsOut) {
+    setTimeout(checkMessages,4000,timeIsOut);
+  }
+  if(repeat && timeIsOut) {
+    var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+currentPick);
+    pickRef.update({
+      player: "No One",
+      playerTeam: "Timed Out",
+      playerPosition: "null"
+    });
   }
 }
 
