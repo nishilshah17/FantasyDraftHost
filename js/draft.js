@@ -260,6 +260,10 @@ function resumeCountdown() {
   countdown.start($('#countdown_clock').val());
 }
 
+function stopCountdown() {
+  countdown.stop();
+}
+
 function pauseCountdown() {
   if(countdown != undefined) {
     countdown.pause();
@@ -287,7 +291,7 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
       lastPick = true;
     }
     toppp = [];
-    pauseCountdown();
+    stopCountdown();
     document.getElementById('timer').style.zIndex = -1000;
     document.getElementById('pickin').style.zIndex = 2000;
     toppp.push(teams[counter-1]);
