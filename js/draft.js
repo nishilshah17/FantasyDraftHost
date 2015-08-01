@@ -1,6 +1,7 @@
 var draftID;
 var countdown;
 var draftActive = false;
+var lastPick = false;
 var timePerPick;
 var currentPick;
 var userID;
@@ -288,6 +289,7 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
   if(counter > 0) {
     if(counter == players.length) {
       draftActive = false;
+      lastPick = true;
     }
     toppp = [];
     pauseCountdown();
@@ -360,12 +362,14 @@ function playPlayerHighlightReel() {
     HTMLvideo.play();
     document.getElementById('playerHighlights').style.zIndex = 4000;
   } else {
-    setTimeout(initiateCountdown, 1750);
+    if(!lastPick) {
+      setTimeout(initiateCountdown, 1750);
+    }
   }
 }
 
 $("video").on("error", function() {
-  if(draftActive) {
+  if(draftActive || lastPick) {
     videoReadyToPlay = false;
   }
 })
