@@ -424,7 +424,7 @@ function checkMessages(timeIsOut) {
     var playerPicked = messageData.messages[i].body;
     if(fromPhone == currentPhone && validPlayer(playerPicked, messageData.messages[i].sid)) {
       repeat = false;
-      var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+pickNumber);
+      var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+currentPick);
       pickRef.update({
         owner: currentOwner,
         team: currentTeam,
