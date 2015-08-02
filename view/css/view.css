@@ -1,0 +1,134 @@
+html, body, #draft {
+  height: 100%;
+  width: 100%;
+  background-color: white;
+}
+
+table {
+  width: 100%;
+  height: 100%;
+}
+
+#pickin {
+  z-index: -2000;
+  position:fixed;
+  top:0px;
+  left:0px;
+  background-color:white;
+  width: 100%;
+  height: 100%;
+}
+
+#pickisin {
+  font-size: 220px;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+#playerHighlights {
+  z-index: -4000;
+  position:fixed;
+  top:0px;
+  left:0px;
+  background-color:black;
+  width: 100%;
+  height: 100%;
+}
+
+#pick {
+  z-index: -3000;
+  position:fixed;
+  top:0px;
+  left:0px;
+  background-color:white;
+  width: 100%;
+  height: 100%;
+}
+
+#player {
+  font-size: 125px;
+  text-align: center;
+  width: 100%;
+  height: 50%;
+}
+
+#playerTeam {
+  font-size: 60px;
+  text-align: center;
+  width: 100%;
+  height: 15%;
+}
+
+#team {
+  font-size: 80px;
+  text-align: center;
+  width: 100%;
+  height: 35%;
+}
+
+@keyframes currentPicker {
+  0%   {background-color: #FFFFFF;}
+  10%  {background-color: #FFCCCC;}
+  20%  {background-color: #FF9999;}
+  30%  {background-color: #FF6666;}
+  35%  {background-color: #FF4C4C;}
+  40%  {background-color: #FF3232;}
+  45%  {background-color: #FF1919;}
+  50%  {background-color: #FF0000;}
+  55%  {background-color: #FF1919;}
+  60%  {background-color: #FF3232;}
+  65%  {background-color: #FF4C4C;}
+  70%  {background-color: #FF6666;}
+  75%  {background-color: #FF7F7F;}
+  80%  {background-color: #FF9999;}
+  85%  {background-color: #FFB2B2;}
+  90%  {background-color: #FFCCCC;}
+  95%  {background-color: #FFEFEF;}
+  100% {background-color: #FFFFFF;}
+}
+
+.currentPick {
+  background-color: #FFFFFF;
+  -webkit-animation: currentPicker 2.5s infinite;
+  animation: currentPicker 2.5s infinite;
+}
+
+.flat-table {
+	border-collapse:collapse;
+	font-family: 'Open Sans', sans-serif;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+.flat-table th, .flat-table td {
+  border: 1px solid #999;
+}
+
+.flat-table th {
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+	color: rgba(0,0,0,0.75);
+	text-shadow: 0 0 1px rgba(0,0,0,0.1);
+	font-size: 1.4em;
+}
+
+.flat-table td {
+	color: #000;
+	text-shadow: 0 0 1px rgba(255,255,255,0.1);
+	font-size: 1.4em;
+}
+
+.flat-table tr {
+	-webkit-transition: background 0.3s, box-shadow 0.3s;
+	-moz-transition: background 0.3s, box-shadow 0.3s;
+	transition: background 0.3s, box-shadow 0.3s;
+}
+
+.flat-table-3 {
+  background: #FFFFF;
+}
+
+.openSans {
+  font-family: 'Open Sans', sans-serif;
+}

@@ -1,0 +1,71 @@
+.view-draft-flat-button {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 60px;
+  padding: 0;
+  font-size: 22px;
+  color: white;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  background: #1abc9c;
+  border: 0;
+  border-bottom: 2px solid #12ab8d;
+  cursor: pointer;
+  -webkit-box-shadow: inset 0 -2px #12ab8d;
+  box-shadow: inset 0 -2px #12ab8d;
+}
+
+.view-draft-flat-button:active {
+  top: 1px;
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.flat-table {
+	border-collapse:collapse;
+	font-family: 'Open Sans', sans-serif;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+.flat-table th, .flat-table td {
+  border: 1px solid #999;
+}
+
+.flat-table th {
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+	color: rgba(0,0,0,0.75);
+	text-shadow: 0 0 1px rgba(0,0,0,0.1);
+	font-size: 1.4em;
+}
+
+.flat-table td {
+	color: #000;
+	text-shadow: 0 0 1px rgba(255,255,255,0.1);
+	font-size: 1.4em;
+}
+
+.flat-table tr {
+	-webkit-transition: background 0.3s, box-shadow 0.3s;
+	-moz-transition: background 0.3s, box-shadow 0.3s;
+	transition: background 0.3s, box-shadow 0.3s;
+}
+
+.flat-table-3 {
+  background: #FFFFF;
+}
+
+#draftListTable {
+  width: 100%;
+  height: auto;
+  margin-top: 3em;
+}
+
+.openSans {
+  font-family: 'Open Sans', sans-serif;
+  text-align: center;
+  padding-top: 5%;
+}
