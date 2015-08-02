@@ -1,12 +1,13 @@
 var draftID;
+var userID;
 var countdown;
 var draftActive = false;
 var lastPick = false;
 var timePerPick;
 var currentPick;
-var userID;
 var videoReadyToPlay;
 var firstInstance = true;
+var numPicks;
 
 //data that needs to be cached
 var playerData;
@@ -33,6 +34,8 @@ var pickedPlayerPosition;
 var accountSID;
 var authToken;
 var twilioNumber;
+
+var toppp; //stands for teams, owners, phones, players playerTeams, playerPositions
 
 $(document).ready(function() {
   var pickCounter;
@@ -125,7 +128,7 @@ $(document).ready(function() {
       playerPositions = [];
 
       numRounds = draftSnapshot.child('rounds').val();
-      var numPicks = draftSnapshot.child('picks').numChildren();
+      numPicks = draftSnapshot.child('picks').numChildren();
       timePerPick = draftSnapshot.child('timePerPick').val();
 
       var counter = 0;
@@ -204,6 +207,7 @@ $(document).ready(function() {
 });
 
 function initiateCountdown() {
+  alert("countdown initiated");
 
   ticking = new Audio("audio/ticking.wav");
   alarm = new Audio("audio/alarm.wav");
@@ -241,7 +245,7 @@ function initiateCountdown() {
   countdown.pause();
   ping.play();
 
-  setTimeout(showCountdown,250);
+  setTimeout(resumeCountdown,250);
 }
 
 function showCountdown() {
@@ -252,12 +256,8 @@ function stopAlarm() {
   alarm.pause();
 }
 
-function showCountdown() {
-  document.getElementById('timer').style.zIndex = 1000;
-  countdown.start(timePerPick);
-}
-
 function resumeCountdown() {
+  document.getElementById('timer').style.zIndex = 1000;
   countdown.start($('#countdown_clock').val());
 }
 
@@ -274,8 +274,6 @@ function pauseCountdown() {
   ticking.pause();
   alarm.pause();
 }
-
-var toppp;
 
 function nextPick(teams, owners, phones, players, playerTeams, playerPositions) {
 
@@ -306,8 +304,9 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
     $('#playerHighlightReel').attr('src',source);
     $('#playerHighlightReel').attr('preload','auto');
     responsiveVoice.speak("The pick is in", "UK English Male",{onstart: nothing, onend: pauseForTeam});
-  } else {
+  } else if(currentPick < (players.length + 1)){
     firstInstance = false;
+    alert("countdown coming from next pick");
     setTimeout(initiateCountdown,3000);
   }
   if(counter < players.length) {
@@ -366,6 +365,7 @@ function playPlayerHighlightReel() {
     document.getElementById('playerHighlights').style.zIndex = 4000;
   } else {
     if(!lastPick) {
+      alert("countdown coming from highlight reel");
       setTimeout(initiateCountdown, 1750);
     }
   }
@@ -380,6 +380,7 @@ $("video").on("error", function() {
 function videoEnded() {
   document.getElementById('playerHighlights').style.zIndex = -4000;
   if(draftActive) {
+    alert("countdown coming from video ended");
     setTimeout(initiateCountdown,1750);
   }
 }
@@ -408,47 +409,49 @@ function updateMessageData() {
 function checkMessages(timeIsOut) {
   updateMessageData();
   var repeat;
-  if(messageData.messages.length > 0) {
-    currentMessageID = messageData.messages[0].sid;
-  } else {
-    currentMessageID = 0;
-  }
-
-  for(var i = 0; i < messageData.messages.length; i++) {
-    if(messageData.messages[i].sid == firstMessageID) {
-      repeat = true;
-      break;
+  if(currentPick < numPicks + 1) {
+    if(messageData.messages.length > 0) {
+      currentMessageID = messageData.messages[0].sid;
+    } else {
+      currentMessageID = 0;
     }
-    var fromPhone = messageData.messages[i].from;
-    fromPhone = fromPhone.substring(2); //remove the +1 from the phone number
-    var playerPicked = messageData.messages[i].body;
-    if(fromPhone == currentPhone && validPlayer(playerPicked, messageData.messages[i].sid)) {
-      repeat = false;
+
+    for(var i = 0; i < messageData.messages.length; i++) {
+      if(messageData.messages[i].sid == firstMessageID) {
+        repeat = true;
+        break;
+      }
+      var fromPhone = messageData.messages[i].from;
+      fromPhone = fromPhone.substring(2); //remove the +1 from the phone number
+      var playerPicked = messageData.messages[i].body;
+      if(fromPhone == currentPhone && validPlayer(playerPicked, messageData.messages[i].sid)) {
+        repeat = false;
+        var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+currentPick);
+        pickRef.update({
+          owner: currentOwner,
+          team: currentTeam,
+          phone: currentPhone,
+          player: pickedPlayer,
+          playerTeam: pickedPlayerTeam,
+          playerPosition: pickedPlayerPosition
+        });
+        break;
+      } else {
+        repeat = true;
+      }
+    }
+
+    if(repeat && !timeIsOut) {
+      setTimeout(checkMessages,4000,timeIsOut);
+    }
+    if(repeat && timeIsOut) {
       var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+currentPick);
       pickRef.update({
-        owner: currentOwner,
-        team: currentTeam,
-        phone: currentPhone,
-        player: pickedPlayer,
-        playerTeam: pickedPlayerTeam,
-        playerPosition: pickedPlayerPosition
+        player: "No One",
+        playerTeam: "Timed Out",
+        playerPosition: "null"
       });
-      break;
-    } else {
-      repeat = true;
     }
-  }
-
-  if(repeat && !timeIsOut) {
-    setTimeout(checkMessages,4000,timeIsOut);
-  }
-  if(repeat && timeIsOut) {
-    var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+currentPick);
-    pickRef.update({
-      player: "No One",
-      playerTeam: "Timed Out",
-      playerPosition: "null"
-    });
   }
 }
 
