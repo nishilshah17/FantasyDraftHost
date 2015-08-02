@@ -6,6 +6,7 @@ var lastPick = false;
 var currentTeam;
 var currentOwner;
 var currentPick;
+var announced = [];
 
 var ping = new Audio("../audio/ping.mp3");
 
@@ -105,17 +106,20 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
       draftActive = false;
       lastPick = true;
     }
-    toppp = [];
-    document.getElementById('pickin').style.zIndex = 2000;
-    toppp.push(teams[counter-1]);
-    toppp.push(owners[counter-1]);
-    toppp.push(players[counter-1]);
-    toppp.push(playerTeams[counter-1]);
-    toppp.push(playerPositions[counter-1]);
-    var source = '../videos/'+toppp[2].replace(/\s+/g, '')+'.mp4';
-    $('#playerHighlightReel').attr('src',source);
-    $('#playerHighlightReel').attr('preload','auto');
-    responsiveVoice.speak("The pick is in", "UK English Male",{onstart: null, onend: pauseForTeam});
+    if(announced.indexOf(players[counter-1]) < 0) {
+      announced.push(players[counter-1]);
+      toppp = [];
+      document.getElementById('pickin').style.zIndex = 2000;
+      toppp.push(teams[counter-1]);
+      toppp.push(owners[counter-1]);
+      toppp.push(players[counter-1]);
+      toppp.push(playerTeams[counter-1]);
+      toppp.push(playerPositions[counter-1]);
+      var source = '../videos/'+toppp[2].replace(/\s+/g, '')+'.mp4';
+      $('#playerHighlightReel').attr('src',source);
+      $('#playerHighlightReel').attr('preload','auto');
+      responsiveVoice.speak("The pick is in", "UK English Male",{onstart: null, onend: pauseForTeam});
+    }
   } else if(currentPick < (players.length + 1)){
     firstInstance = false;
   }
