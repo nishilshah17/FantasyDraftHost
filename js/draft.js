@@ -207,7 +207,6 @@ $(document).ready(function() {
 });
 
 function initiateCountdown() {
-  alert("countdown initiated");
 
   ticking = new Audio("audio/ticking.wav");
   alarm = new Audio("audio/alarm.wav");
@@ -306,7 +305,6 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
     responsiveVoice.speak("The pick is in", "UK English Male",{onstart: nothing, onend: pauseForTeam});
   } else if(currentPick < (players.length + 1)){
     firstInstance = false;
-    alert("countdown coming from next pick");
     setTimeout(initiateCountdown,3000);
   }
   if(counter < players.length) {
@@ -365,7 +363,6 @@ function playPlayerHighlightReel() {
     document.getElementById('playerHighlights').style.zIndex = 4000;
   } else {
     if(!lastPick) {
-      alert("countdown coming from highlight reel");
       setTimeout(initiateCountdown, 1750);
     }
   }
@@ -380,7 +377,6 @@ $("video").on("error", function() {
 function videoEnded() {
   document.getElementById('playerHighlights').style.zIndex = -4000;
   if(draftActive) {
-    alert("countdown coming from video ended");
     setTimeout(initiateCountdown,1750);
   }
 }
