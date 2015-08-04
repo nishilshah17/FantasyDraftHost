@@ -376,8 +376,8 @@ function playPlayerHighlightReel() {
     HTMLvideo.play();
     document.getElementById('playerHighlights').style.zIndex = 4000;
   } else {
+    document.getElementById('timer').style.zIndex = -1000;
     if(!lastPick) {
-      document.getElementById('timer').style.zIndex = -1000;
       setTimeout(initiateCountdown, 1750);
     }
   }
