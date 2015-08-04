@@ -8,6 +8,7 @@ var currentPick;
 var videoReadyToPlay;
 var firstInstance = true;
 var numPicks;
+var betweenPicks = true;
 
 //data that needs to be cached
 var playerData;
@@ -251,6 +252,7 @@ function initiateCountdown() {
   countdown.start(timePerPick); //just to reset it
   countdown.pause();
   ping.play();
+  betweenPicks = false;
 
   setTimeout(resumeCountdown,250);
 }
@@ -297,6 +299,7 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
   currentPick = counter+1;
 
   if(counter > 0 && !firstInstance) {
+    betweenPicks = true;
     if(counter == players.length) {
       draftActive = false;
       lastPick = true;
@@ -433,7 +436,7 @@ function checkMessages(timeIsOut) {
       var fromPhone = messageData.messages[i].from;
       fromPhone = fromPhone.substring(2); //remove the +1 from the phone number
       var playerPicked = messageData.messages[i].body;
-      if(fromPhone == currentPhone && validPlayer(playerPicked, messageData.messages[i].sid)) {
+      if(fromPhone == currentPhone && validPlayer(playerPicked, messageData.messages[i].sid) && !betweenPicks) {
         if(pickedPlayer == "Adrian Peterson") {
           pickedPlayerTeam = "MIN";
         }
