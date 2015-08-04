@@ -374,6 +374,7 @@ function playPlayerHighlightReel() {
     document.getElementById('playerHighlights').style.zIndex = 4000;
   } else {
     if(!lastPick) {
+      document.getElementById('timer').style.zIndex = -1000;
       setTimeout(initiateCountdown, 1750);
     }
   }
@@ -386,6 +387,7 @@ $("video").on("error", function() {
 })
 
 function videoEnded() {
+  document.getElementById('timer').style.zIndex = -1000;
   document.getElementById('playerHighlights').style.zIndex = -4000;
   if(draftActive) {
     setTimeout(initiateCountdown,1750);
@@ -432,6 +434,9 @@ function checkMessages(timeIsOut) {
       fromPhone = fromPhone.substring(2); //remove the +1 from the phone number
       var playerPicked = messageData.messages[i].body;
       if(fromPhone == currentPhone && validPlayer(playerPicked, messageData.messages[i].sid)) {
+        if(pickedPlayer == "Adrian Peterson") {
+          pickedPlayerTeam = "MIN";
+        }
         repeat = false;
         var pickRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID+"/picks/"+currentPick);
         pickRef.update({
