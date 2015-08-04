@@ -478,7 +478,7 @@ function validPlayer(playerName, messageSID) {
 
   //checks if player is real using the data obtained from the NFL Player API
   for (var i = 0; i < playerData.Players.length; i++) {
-    if(playerData.Players[i].displayName.toUpperCase() === playerName.toUpperCase()) {
+    if(playerData.Players[i].displayName.toUpperCase().split('.').join("") === playerName.toUpperCase()split('.').join("")) {
       valid = true;
       pickedPlayer = playerData.Players[i].displayName;
       pickedPlayerTeam = playerData.Players[i].team;
