@@ -68,7 +68,7 @@ $('#submitButton').click(function () {
       }
     });
   }
-  
+
   var currentPick = 0;
   var allPicks = "{";
   for(var i = 0; i < numRounds; i++) {
@@ -114,3 +114,9 @@ $('#submitButton').click(function () {
   $('#setupBody').append('<div class="draftID">draft set up successfully</div>');
   $('#setupBody').append('<input type="submit" value="home" class="home-flat-button" onclick=window.location.href="index.html" />');
 });
+
+function make_base_auth(user, password) {
+    var tok = user + ':' + password;
+    var hash = btoa(tok);
+    return 'Basic ' + hash;
+}
