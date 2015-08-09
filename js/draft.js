@@ -48,12 +48,12 @@ $(document).ready(function() {
   var draftsRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts");
   var userRef = new Firebase("https://fantasy-draft-host.firebaseio.com/users/"+userID);
 
-  draftsRef.once('value', function(draftsSnapshot) {
+  draftsRef.on('value', function(draftsSnapshot) {
     $('#draftList').empty();
     var draftListTable = $("<table cellpadding='20'></table>");
     draftListTable.attr('id','draftListTable');
     draftListTable.attr('class','flat-table flat-table-3');
-    var titleRow = $('<tr><th><b>League</b></th><th><b>Sport</b></th><th><b>Teams</b></th><th><b>Rounds</b></th><th><b>Timer</b></th><th><b>Draft</b></th></tr>');
+    var titleRow = $('<tr><th><b>League</b></th><th><b>Sport</b></th><th><b>Teams</b></th><th><b>Rounds</b></th><th><b>Timer</b></th><th><b>Draft</b></th><th><b>Delete</b></th></tr>');
     draftListTable.append(titleRow);
 
     draftsSnapshot.forEach(function(draftSnapshot) {
@@ -65,6 +65,7 @@ $(document).ready(function() {
         draftRow.append($('<th>'+draftSnapshot.child('rounds').val()+'</th>'));
         draftRow.append($('<th>'+draftSnapshot.child('timePerPick').val()+'</th>'));
         draftRow.append($('<th><input type="submit" value="Start Draft" class="start-draft-flat-button draftIDSubmit" data-id="'+draftSnapshot.key()+'" /></th>'));
+        draftRow.append($('<th><input type="submit" value="Delete" class="delete-draft-flat-button deleteDraftSubmit" data-id="'+draftSnapshot.key()+'" /></th>'));
         draftListTable.append(draftRow);
       }
     });
@@ -79,92 +80,97 @@ $(document).ready(function() {
   });
 
   $('#draftList').on('click','input', function() {
-    //document.getElementById('draftList').style.position = "fixed";
-    document.getElementById('draftList').style.zIndex = -2125;
-
-    draftActive = true;
-    loadPlayerData();
-
     draftID = $(this).data('id');
     var draftRef = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts/"+draftID);
 
-    draftRef.update({
-      active: "true"
-    });
+    if($(this).val() == "Start Draft") {
 
-    draftRef.on("value", function(draftSnapshot) {
-      pickCounter = 0;
-      teams = [];
-      owners = [];
-      phones = [];
-      players = [];
-      playerTeams = [];
-      playerPositions = [];
+      //document.getElementById('draftList').style.position = "fixed";
+      document.getElementById('draftList').style.zIndex = -2125;
 
-      numRounds = draftSnapshot.child('rounds').val();
-      numPicks = draftSnapshot.child('picks').numChildren();
-      timePerPick = draftSnapshot.child('timePerPick').val();
+      draftActive = true;
+      loadPlayerData();
 
-      var counter = 0;
-      draftSnapshot.child('picks').forEach(function(pickSnapshot) {
-        counter++;
-        teams.push(pickSnapshot.child('team').val());
-        owners.push(pickSnapshot.child('owner').val());
-        phones.push(pickSnapshot.child('phone').val());
-        players.push(pickSnapshot.child('player').val());
-        playerTeams.push(pickSnapshot.child('playerTeam').val());
-        playerPositions.push(pickSnapshot.child('playerPosition').val());
+      draftRef.update({
+        active: "true"
       });
 
-      $('#draft').empty();
-      var table = $("<table></table>");
-      table.attr('id','draftTable');
-      table.attr('class','flat-table flat-table-3');
+      draftRef.on("value", function(draftSnapshot) {
+        pickCounter = 0;
+        teams = [];
+        owners = [];
+        phones = [];
+        players = [];
+        playerTeams = [];
+        playerPositions = [];
 
-      for(var y = 0; y < numRounds; y++) {
-        var row = $("<tr></tr>");
-        row.attr('id','round'+(y+1));
-        var rowCells = [];
+        numRounds = draftSnapshot.child('rounds').val();
+        numPicks = draftSnapshot.child('picks').numChildren();
+        timePerPick = draftSnapshot.child('timePerPick').val();
 
-        for(var x = 0; x < (teams.length/numRounds)+1; x++) {
-          var cell;
-          if(x == 0) {
-            cell = $('<th>'+(y+1)+'</th>');
-          } else {
-            pickCounter++;
-            var currentOwner = owners[pickCounter-1];
-            if(players[pickCounter-1] == "null") {
-              cell = $('<th id="'+pickCounter+'">'+pickCounter+'<br/>'+currentOwner+'</th>');
+        var counter = 0;
+        draftSnapshot.child('picks').forEach(function(pickSnapshot) {
+          counter++;
+          teams.push(pickSnapshot.child('team').val());
+          owners.push(pickSnapshot.child('owner').val());
+          phones.push(pickSnapshot.child('phone').val());
+          players.push(pickSnapshot.child('player').val());
+          playerTeams.push(pickSnapshot.child('playerTeam').val());
+          playerPositions.push(pickSnapshot.child('playerPosition').val());
+        });
+
+        $('#draft').empty();
+        var table = $("<table></table>");
+        table.attr('id','draftTable');
+        table.attr('class','flat-table flat-table-3');
+
+        for(var y = 0; y < numRounds; y++) {
+          var row = $("<tr></tr>");
+          row.attr('id','round'+(y+1));
+          var rowCells = [];
+
+          for(var x = 0; x < (teams.length/numRounds)+1; x++) {
+            var cell;
+            if(x == 0) {
+              cell = $('<th>'+(y+1)+'</th>');
             } else {
-              var positionColor = getPositionColor(playerPositions[pickCounter-1]);
-              cell = $('<th bgcolor="'+positionColor+'" id="'+pickCounter+'"><b>'+players[pickCounter-1]+'</b><br/>'+currentOwner+'</th>');
+              pickCounter++;
+              var currentOwner = owners[pickCounter-1];
+              if(players[pickCounter-1] == "null") {
+                cell = $('<th id="'+pickCounter+'">'+pickCounter+'<br/>'+currentOwner+'</th>');
+              } else {
+                var positionColor = getPositionColor(playerPositions[pickCounter-1]);
+                cell = $('<th bgcolor="'+positionColor+'" id="'+pickCounter+'"><b>'+players[pickCounter-1]+'</b><br/>'+currentOwner+'</th>');
+              }
+            }
+            rowCells.push(cell);
+          }
+
+          row.append(rowCells[0]);
+          if(y % 2 == 0) {
+            for (var i = 1; i < rowCells.length; i++) {
+              row.append(rowCells[i]);
+            }
+          } else {
+            for (var i = rowCells.length-1; i > 0; i--) {
+              row.append(rowCells[i]);
             }
           }
-          rowCells.push(cell);
+          table.append(row);
         }
-
-        row.append(rowCells[0]);
-        if(y % 2 == 0) {
-          for (var i = 1; i < rowCells.length; i++) {
-            row.append(rowCells[i]);
-          }
-        } else {
-          for (var i = rowCells.length-1; i > 0; i--) {
-            row.append(rowCells[i]);
-          }
+        $('#draft').append(table);
+        if(draftActive) {
+          nextPick(teams, owners, phones, players, playerTeams, playerPositions);
         }
-        table.append(row);
-      }
-      $('#draft').append(table);
-      if(draftActive) {
-        nextPick(teams, owners, phones, players, playerTeams, playerPositions);
-      }
-    }, function (errorObject) {
-      console.log("The read failed: " + errorObject.code);
-    });
+      }, function (errorObject) {
+        console.log("The read failed: " + errorObject.code);
+      });
 
-    $('#draftID').remove();
-    $('#draftIDSubmit').remove();
+      $('#draftID').remove();
+      $('#draftIDSubmit').remove();
+    } else if ($(this).val() == "Delete") {
+      draftRef.remove();
+    }
 
   });
 
