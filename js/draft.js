@@ -92,37 +92,6 @@ $(document).ready(function() {
       active: "true"
     });
 
-    draftRef.once("value", function(draftSnapshot) {
-      var teamCounter = 0;
-      var limit = parseInt(draftSnapshot.child('teams').val());
-
-      var picksSnapshot = draftSnapshot.child('picks');
-      picksSnapshot.forEach(function(pick) {
-        teamCounter++;
-        var teamPhone = pick.child('phone').val();
-
-        $.ajax({
-          url: 'https://api.twilio.com/2010-04-01/Accounts/'+accountSID+'/Messages.json',
-          type: 'post',
-          dataType: 'json',
-          data: {
-            "To": teamPhone,
-            "From": twilioNumber,
-            "Body": "Welcome to Fantasy Draft Host!"
-          },
-          beforeSend: function(xhr) {
-            xhr.setRequestHeader('Authorization',make_base_auth(accountSID,authToken));
-          },
-          success: function(data) {
-          }
-        });
-
-        if(teamCounter == limit) {
-          return true;
-        }
-      });
-    });
-
     draftRef.on("value", function(draftSnapshot) {
       pickCounter = 0;
       teams = [];

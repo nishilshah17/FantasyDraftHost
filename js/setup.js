@@ -1,3 +1,17 @@
+//users twilio information
+var accountSID;
+var authToken;
+var twilioNumber;
+
+var userRef = new Firebase("https://fantasy-draft-host.firebaseio.com/users/"+userID);
+var userID = localStorage.getItem('uid');
+
+userRef.once('value', function(userSnapshot) {
+  accountSID = userSnapshot.child('accountSID').val();
+  authToken = userSnapshot.child('authToken').val();
+  twilioNumber = userSnapshot.child('number').val();
+});
+
 for(var i = 0; i < 20; i++) {
   $("#roundsSelect").append(new Option(i+1, i+1));
 }
@@ -37,6 +51,24 @@ $('#submitButton').click(function () {
     phones.push($('#phone'+(i+1)).val());
   }
 
+  for(var i = 0; i < phones.length; i++) {
+    $.ajax({
+      url: 'https://api.twilio.com/2010-04-01/Accounts/'+accountSID+'/Messages.json',
+      type: 'post',
+      dataType: 'json',
+      data: {
+        "To": phones[i],
+        "From": twilioNumber,
+        "Body": "Welcome to Fantasy Draft Host! Text me your pick when you're on the clock."
+      },
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader('Authorization',make_base_auth(accountSID,authToken));
+      },
+      success: function(data) {
+      }
+    });
+  }
+  
   var currentPick = 0;
   var allPicks = "{";
   for(var i = 0; i < numRounds; i++) {
