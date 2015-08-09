@@ -3,8 +3,8 @@ var accountSID;
 var authToken;
 var twilioNumber;
 
-var userRef = new Firebase("https://fantasy-draft-host.firebaseio.com/users/"+userID);
 var userID = localStorage.getItem('uid');
+var userRef = new Firebase("https://fantasy-draft-host.firebaseio.com/users/"+userID);
 
 userRef.once('value', function(userSnapshot) {
   accountSID = userSnapshot.child('accountSID').val();
