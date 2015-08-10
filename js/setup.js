@@ -52,21 +52,7 @@ $('#submitButton').click(function () {
   }
 
   for(var i = 0; i < phones.length; i++) {
-    $.ajax({
-      url: 'https://api.twilio.com/2010-04-01/Accounts/'+accountSID+'/Messages.json',
-      type: 'post',
-      dataType: 'json',
-      data: {
-        "To": phones[i],
-        "From": twilioNumber,
-        "Body": "Welcome to Fantasy Draft Host! Text me your pick when you're on the clock."
-      },
-      beforeSend: function(xhr) {
-        xhr.setRequestHeader('Authorization',make_base_auth(accountSID,authToken));
-      },
-      success: function(data) {
-      }
-    });
+    setTimeout(sendWelcome,5,phones[i]);
   }
 
   var currentPick = 0;
@@ -119,4 +105,22 @@ function make_base_auth(user, password) {
     var tok = user + ':' + password;
     var hash = btoa(tok);
     return 'Basic ' + hash;
+}
+
+function sendWelcome(to) {
+  $.ajax({
+    url: 'https://api.twilio.com/2010-04-01/Accounts/'+accountSID+'/Messages.json',
+    type: 'post',
+    dataType: 'json',
+    data: {
+      "To": to,
+      "From": twilioNumber,
+      "Body": "Welcome to Fantasy Draft Host! Text me your pick when you're on the clock."
+    },
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader('Authorization',make_base_auth(accountSID,authToken));
+    },
+    success: function(data) {
+    }
+  });
 }
