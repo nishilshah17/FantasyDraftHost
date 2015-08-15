@@ -3,6 +3,16 @@ var accountSID;
 var authToken;
 var twilioNumber;
 
+var picksCustomized = false;
+var pickCounter;
+
+var draftOrder = [];
+var keepers = [];
+
+var teams = [];
+var owners = [];
+var phones = [];
+
 var userID = localStorage.getItem('uid');
 var userRef = new Firebase("https://fantasy-draft-host.firebaseio.com/users/"+userID);
 
@@ -22,6 +32,18 @@ for(var i = 0; i < 20; i++) {
 
 $('#teamsSelect').change(function() {
   $('#teamsInputList').empty();
+  draftOrder = [];
+  keepers = [];
+  for(var i = 0; i < $('#roundsSelect').val(); i++) {
+    for(var j = 0; j < $('#teamsSelect').val(); j++) {
+      if(i % 2 == 1) {
+        draftOrder.push($('#teamsSelect').val()-j);
+      } else {
+        draftOrder.push(j+1);
+      }
+      keepers.push("No Keeper");
+    }
+  }
   var teamsValue = $(this).val();
   if(teamsValue != "teams") {
     var maxInputFields = parseInt(teamsValue);
@@ -34,15 +56,73 @@ $('#teamsSelect').change(function() {
 
 var ref = new Firebase("https://fantasy-draft-host.firebaseio.com/drafts");
 
+$('#customizeButton').click(function () {
+  if($('#teamsSelect').val() == "teams") {
+    alert("Fill out team information first.");
+  } else {
+    document.getElementById('customizePicks').style.zIndex = 1000;
+    pickCounter = 0;
+    $('#customizePicks').empty();
+    $('#customizePicks').append('<p align="left" class="instructions">enter keepers into the text box; change draft picks with the dropdowns</p>')
+    $('#customizePicks').append('<p align="right" onclick="done()" style="color:black;" class="done" id="done">save customization</p>');
+    owners = [];
+    var table = $('<table></table>');
+    table.attr('id','customizeTable');
+    table.attr('class','flat-table','flat-table-3');
+
+    for(var y = 0; y < $('#roundsSelect').val(); y++) {
+      var row = $("<tr></tr>");
+      row.attr('id','round'+(y+1));
+      var rowCells = [];
+      for(var x = 0; x < parseInt($('#teamsSelect').val()); x++) {
+        var cell;
+        pickCounter++;
+        var dropdownContainer = $('<div></div>')
+        var dropdown = $('<select></select>');
+        dropdown.attr('class','otherCustomSelect');
+        dropdown.attr('id','select'+pickCounter);
+        for(var i = 0; i < $('#teamsSelect').val(); i++) {
+          if((i+1) == draftOrder[pickCounter-1]) {
+            dropdown.append($('<option>', {
+              value: i+1,
+              text: $('#owner'+(i+1)).val(),
+              selected: true
+            }));
+          } else {
+            dropdown.append($('<option>', {
+              value: i+1,
+              text: $('#owner'+(i+1)).val()
+            }))
+          }
+          owners.push($('#owner'+(i+1)).val());
+        }
+        dropdownContainer.append(dropdown);
+        cell = $('<th class="pickFont" id="'+pickCounter+'">'+pickCounter+'<br/>'+dropdownContainer.html()+'<input type="text" class="keeperText" id="keeper'+pickCounter+'" value="'+keepers[pickCounter-1]+'" /></th>');
+        rowCells.push(cell);
+      }
+
+      if(y % 2 == 0) {
+        for (var i = 0; i < rowCells.length; i++) {
+          row.append(rowCells[i]);
+        }
+      } else {
+        for (var i = rowCells.length-1; i > -1; i--) {
+          row.append(rowCells[i]);
+        }
+      }
+      table.append(row);
+    }
+    $('#customizePicks').append(table);
+    window.scrollTo(0,0);
+  }
+});
+
 $('#submitButton').click(function () {
   var league = $('#leagueName').val();
   var sportName = $('#sportSelect').val();
   var numRounds = $('#roundsSelect').val();
   var numTeams = $('#teamsSelect').val();
   var timeLimit = $('#timePerPick').val();
-  var teams = [];
-  var owners = [];
-  var phones = [];
   var uid = localStorage.getItem('uid');
 
   for(var i = 0; i < numTeams; i++) {
@@ -55,30 +135,35 @@ $('#submitButton').click(function () {
     setTimeout(sendWelcome,5,phones[i]);
   }
 
-  var currentPick = 0;
   var allPicks = "{";
-  for(var i = 0; i < numRounds; i++) {
-    for(var j = 0; j < numTeams; j++) {
-      currentPick++;
-      var teamName;
-      var ownerName;
-      var phoneNumber;
-      if(i%2 == 0) {
-        teamName = teams[j];
-        ownerName = owners[j];
-        phoneNumber = phones[j];
-      } else {
-        teamName = teams[teams.length-1-j];
-        ownerName = owners[owners.length-1-j];
-        phoneNumber = phones[phones.length-1-j];
-      }
-      allPicks += '"'+currentPick+'": ';
-        allPicks += '{ "team": "'+teamName+'", "owner": "'+ownerName+'", "phone": "'+phoneNumber+'", "player": "null", "playerTeam": "null", "playerPosition": "null"}';
-      if((i+1) == numRounds && (j+1) == numTeams) {
-        //do nothing
-      } else {
-        allPicks += ",";
-      }
+  for(var i = 0; i < draftOrder.length; i++) {
+    var currentPick = (i+1);
+    var currentPicker = draftOrder[i]-1;
+    var teamName;
+    var ownerName;
+    var phoneNumber;
+    var keeper;
+    var position;
+
+    teamName = teams[currentPicker];
+    ownerName = owners[currentPicker];
+    phoneNumber = phones[currentPicker];
+    keeper = keepers[i];
+
+    if(keeper == "No Keeper") {
+      keeper = "null";
+      position = "null";
+    } else {
+      position = "keeper";
+    }
+
+    phoneNumber = phoneNumber.replace(/\s+/g, '');
+    phoneNumber = phoneNumber.replace(/\(|\)/g,'');
+    phoneNumber = phoneNumber.replace(/-/g, "");
+    allPicks += '"'+currentPick+'": ';
+      allPicks += '{ "team": "'+teamName+'", "owner": "'+ownerName+'", "phone": "'+phoneNumber+'", "player": "'+keeper+'", "playerTeam": "null", "playerPosition": "'+position+'"}';
+    if(i+1 < draftOrder.length) {
+      allPicks += ",";
     }
   }
   allPicks += "}";
@@ -105,6 +190,29 @@ function make_base_auth(user, password) {
     var tok = user + ':' + password;
     var hash = btoa(tok);
     return 'Basic ' + hash;
+}
+
+function done() {
+  if($('#done').html() == "save customization") {
+    draftOrder = [];
+    keepers = [];
+    for(var i = 0; i < pickCounter; i++) {
+      draftOrder.push(parseInt($('#select'+(i+1)).val()));
+    }
+    for(var i = 0; i < pickCounter; i++) {
+      var keeper = $('#keeper'+(i+1)).val();
+      keepers.push(keeper);
+    }
+
+    $('#done').empty();
+    document.getElementById('done').style.color = "red";
+    $('#done').append("customization saved");
+    setTimeout(hideCustomization, 500);
+  }
+}
+
+function hideCustomization() {
+  document.getElementById('customizePicks').style.zIndex = -1000;
 }
 
 function sendWelcome(to) {

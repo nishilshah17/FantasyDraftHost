@@ -274,24 +274,30 @@ function nextPick(teams, owners, phones, players, playerTeams, playerPositions) 
   currentPick = counter+1;
 
   if(counter > 0 && !firstInstance) {
-    betweenPicks = true;
-    if(counter == players.length) {
-      draftActive = false;
-      lastPick = true;
+    var tempCounter = counter-1;
+    while(playerPositions[tempCounter] == "keeper") {
+      tempCounter--;
     }
-    toppp = [];
-    stopCountdown();
-    document.getElementById('timer').style.zIndex = -1000;
-    document.getElementById('pickin').style.zIndex = 2000;
-    toppp.push(teams[counter-1]);
-    toppp.push(owners[counter-1]);
-    toppp.push(players[counter-1]);
-    toppp.push(playerTeams[counter-1]);
-    toppp.push(playerPositions[counter-1]);
-    var source = 'videos/'+toppp[2].replace(/\s+/g, '')+'.mp4';
-    $('#playerHighlightReel').attr('src',source);
-    $('#playerHighlightReel').attr('preload','auto');
-    responsiveVoice.speak("The pick is in", "UK English Male",{onstart: null, onend: pauseForTeam});
+    if(tempCounter >= 0) {
+      betweenPicks = true;
+      if(counter == players.length) {
+        draftActive = false;
+        lastPick = true;
+      }
+      stopCountdown();
+      document.getElementById('timer').style.zIndex = -1000;
+      document.getElementById('pickin').style.zIndex = 2000;
+      toppp = [];
+      toppp.push(teams[tempCounter]);
+      toppp.push(owners[tempCounter]);
+      toppp.push(players[tempCounter]);
+      toppp.push(playerTeams[tempCounter]);
+      toppp.push(playerPositions[tempCounter]);
+      var source = 'videos/'+toppp[2].replace(/\s+/g, '')+'.mp4';
+      $('#playerHighlightReel').attr('src',source);
+      $('#playerHighlightReel').attr('preload','auto');
+      responsiveVoice.speak("The pick is in", "UK English Male",{onstart: null, onend: pauseForTeam});
+    }
   } else if(currentPick < (players.length + 1)){
     firstInstance = false;
     setTimeout(initiateCountdown,3000);
@@ -529,6 +535,8 @@ function getPositionColor(position) {
       return "FFAEEA";
     case "DEF":
       return "FF3F5A";
+    case "keeper":
+      return "5AFFC8";
     default:
       return "FFFF91";
   }

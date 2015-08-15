@@ -1,3 +1,54 @@
+html, body, table {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+#setup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  body: 100%;
+  background-color: white;
+}
+
+#customizePicks {
+  z-index: -1000;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+#customizeTable {
+  width: 100%;
+  min-height: 100%;
+  background-color:white;
+}
+
+.done {
+  margin-right: 1em;
+  cursor: pointer;
+  cursor: hand;
+  float: right;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+}
+
+.instructions {
+  margin-left: 1em;
+  float: left;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
+.keeperText {
+  text-align: center;
+}
+
 .league-name {
   display: block;
   margin: 0;
@@ -70,7 +121,7 @@ ul.input-list li {
   cursor: pointer;
   -webkit-box-shadow: inset 0 -2px #db4334;
   box-shadow: inset 0 -2px #db4334;
-  margin-top: 1em;
+  margin-top: 0.5em;
 }
 .submit-flat-button:active {
   top: 1px;
@@ -104,7 +155,6 @@ ul.input-list li {
 	margin: 0px 0px 10px 0px;
   margin-top: 1em;
 	padding: 4px 6px;
-
 	text-align: start;
 	text-indent: 0px;
 	text-shadow: none;
@@ -113,6 +163,42 @@ ul.input-list li {
 	white-space: pre;
 	word-spacing: 0px;
 	width: 220px;
+}
+
+.otherCustomSelect{
+	-webkit-align-items: center;
+	-webkit-appearance: menulist-button;
+	-webkit-rtl-ordering: logical;
+	-webkit-writing-mode: horizontal-tb;
+	background-color: rgb(255, 255, 255);
+	border-radius: 0px;
+	border: 1px solid rgb(204, 204, 204);
+	border-image-outset: 0px;
+	border-image-repeat: stretch;
+	border-image-slice: 100%;
+	border-image-source: none;
+	border-image-width: 1;
+	box-sizing: border-box;
+	color: rgb(85, 85, 85);
+	cursor: pointer;
+	display: block;
+  margin-left: auto;
+  margin-right: auto;
+	font-size: 13px;
+	font-weight: normal;
+	height: 30px;
+	letter-spacing: normal;
+	line-height: normal;
+  margin-top: 0.5em;
+  margin-bottom: 0;
+	text-align: start;
+	text-indent: 0px;
+	text-shadow: none;
+	text-transform: none;
+	vertical-align: middle;
+	white-space: pre;
+	word-spacing: 0px;
+	width: 125px;
 }
 
 .draftID {
@@ -149,8 +235,78 @@ ul.input-list li {
   box-shadow: none;
 }
 
+.customize-flat-button {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 250px;
+  height: 60px;
+  padding: 0;
+  font-size: 22px;
+  color: white;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  background: #1abc9c;
+  border: 0;
+  border-bottom: 2px solid #12ab8d;
+  cursor: pointer;
+  -webkit-box-shadow: inset 0 -2px #12ab8d;
+  box-shadow: inset 0 -2px #12ab8d;
+  margin-top: 0.5em;
+}
+
+.customize-flat-button:active {
+  top: 1px;
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.flat-table {
+	border-collapse:collapse;
+	font-family: 'Open Sans', sans-serif;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+.flat-table th, .flat-table td {
+  border: 1px solid #999;
+}
+
+.flat-table th {
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+	color: rgba(0,0,0,0.75);
+	text-shadow: 0 0 1px rgba(0,0,0,0.1);
+	font-size: 1.4em;
+}
+
+.flat-table td {
+	color: #000;
+	text-shadow: 0 0 1px rgba(255,255,255,0.1);
+	font-size: 1.4em;
+  background-color: #FFFFFF;
+}
+
+.flat-table tr {
+	-webkit-transition: background 0.3s, box-shadow 0.3s;
+	-moz-transition: background 0.3s, box-shadow 0.3s;
+	transition: background 0.3s, box-shadow 0.3s;
+}
+
+.flat-table-3 {
+  background: #FFFFF;
+}
+
 .openSans {
   font-family: 'Open Sans', sans-serif;
   text-align: center;
   padding-top: 1em;
+  font-weight: 700;
+}
+
+.pickFont {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
 }
