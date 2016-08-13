@@ -405,6 +405,9 @@ function checkMessages(timeIsOut) {
   if(currentPick < numPicks + 1) {
     if(messageData.messages.length > 0) {
       currentMessageID = messageData.messages[0].sid;
+      if(messageData.messages[0].direction == "outbound-reply" && messageData.messages.length > 1) {
+        currentMessageID = messageData.messages[1].sid;
+      }
     } else {
       currentMessageID = 0;
     }
@@ -469,6 +472,7 @@ function validPlayer(playerName, messageSID) {
   }
   if(!valid) {
     if(!(checkedMessages.indexOf(messageSID) > -1)) {
+      checkedMessages.push(messageSID);
       $.ajax({
         url: 'https://api.twilio.com/2010-04-01/Accounts/'+accountSID+'/Messages.json',
         type: 'post',
@@ -481,9 +485,6 @@ function validPlayer(playerName, messageSID) {
         },
         beforeSend: function(xhr) {
           xhr.setRequestHeader('Authorization',auth);
-        },
-        success: function(data) {
-          checkedMessages.push(messageSID);
         }
       });
     }

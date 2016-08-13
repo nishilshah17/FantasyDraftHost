@@ -6,8 +6,7 @@ html, body, #draft {
 
 table {
   width: 100%;
-  min-height: 100%;
-  background-color: white;
+  height: 100%;
 }
 
 #pickin {
